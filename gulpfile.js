@@ -30,7 +30,7 @@ var getBundleName = function() {
 
 var paths = {
     js: ['src/server/**/*.js'],
-    asset: ['src/**', '!src/**/*.js'],
+    asset: ['src/**/*.*', '!src/**/*.js'],
 };
 
 function bundle(bundler) {
@@ -85,12 +85,18 @@ gulp.task('bundle', function() {
 
     // add any other browserify options or transforms here
     bundler
-        //.transform('brfs')
+    //.transform('brfs')
         .transform('babelify');
 
-    gulp.task('js', bundle); // so you can run `gulp js` to build the file
-    bundler.on('update', bundle); // on any dep update, runs the bundler
+    bundler.on('update', function() {
+        bundle(bundler);
+    });
+    bundler.on('bytes', function() {
+        livereload.reload();
+    });
     bundler.on('log', gutil.log); // output build logs to terminal
+    bundler.on('error', gutil.log); // output build logs to terminal
+
     bundle(bundler);
 });
 
@@ -107,12 +113,15 @@ gulp.task('run', ['bundle', 'copy', 'transpile'], function() {
         start: true
     });
 
+    gulp.watch(paths.js, ['transpile']);
+    gulp.watch(paths.asset, ['copy']);
+
     nodemon({
-        script: './build/server/start',
-        watch: ['build', 'node_modules'],
-        ignore: 'src',
-        nodeArgs: ['--debug=9999']
-    })
+            script: './build/server/start',
+            watch: ['build/server', 'node_modules'],
+            ignore: 'src',
+            nodeArgs: ['--debug=9999']
+        })
         .on('restart', function() {
             console.log('Restarted!');
             livereload.reload();
