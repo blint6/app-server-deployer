@@ -1,0 +1,1 @@
+mongod.exe --service --config="D:\Apps\mongo\mongod.cfg"

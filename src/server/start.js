@@ -3,10 +3,13 @@ let socketio = require('socket.io');
 let express = require('express');
 let morgan = require('morgan');
 let consolidate = require('consolidate');
+let dbConnect = require('./db/connect');
 
 console.info('Minode start');
 
 let app = express();
+
+dbConnect('mongodb://localhost/minode');
 
 // Only use logger for development environment
 if (true || process.env.NODE_ENV === 'development') {
