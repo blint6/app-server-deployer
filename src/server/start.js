@@ -4,12 +4,14 @@ let express = require('express');
 let morgan = require('morgan');
 let consolidate = require('consolidate');
 let dbConnect = require('./db/connect');
+let BukkitServer = require('./server-engine/bukkit/BukkitServer');
+let Tail = require('tail').Tail;
 
 console.info('Minode start');
 
 let app = express();
 
-dbConnect('mongodb://localhost/minode');
+//dbConnect('mongodb://localhost/minode');
 
 // Only use logger for development environment
 if (true || process.env.NODE_ENV === 'development') {
@@ -27,13 +29,31 @@ let indexPath = path.resolve(__dirname, '../web/index.jade');
 app.use('/', function(req, res) {
     res.render(indexPath);
 });
+
+
+let testServer = BukkitServer.install('testBukkit');
+testServer.run();
+
+
 // Realtime IO
 let server = app.listen(3000),
     io = socketio.listen(server);
 
 io.on('connection', socket => {
     console.info('Got a handshake');
-    socket.join('minode-web');
+
+    let tail = new Tail(testServer.getLog()),
+        i = 0;
+    tail.on('line', function(data) {
+        socket.emit('dispatch', {
+            actionType: 'Chat.NEW_MESSAGES',
+            messages: [{
+                id: i,
+                content: data
+            }]
+        });
+        i += 1;
+    });
 });
 
 

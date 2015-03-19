@@ -1,3 +1,5 @@
+require('./io/ServerIo');
+
 let React = require('react');
 let Router = require('react-router');
 let Layout = require('./layout');

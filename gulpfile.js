@@ -1,7 +1,7 @@
 'use strict';
 
 var path = require('path');
-var Promise = require('rsvp').Promise;
+var Promise = require('es6-promise').Promise;
 var gulp = require('gulp');
 var del = require('del');
 var es = require('event-stream');

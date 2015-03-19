@@ -1,4 +1,4 @@
-let Promise = require('rsvp').Promise;
+let Promise = require('es6-promise').Promise;
 let mongoose = require('mongoose');
 
 module.exports = function connect(connectionString) {
