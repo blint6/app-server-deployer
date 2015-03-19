@@ -1,6 +1,6 @@
 let fs = require('fs');
 let spawn = require('child_process').spawn;
-let Promise = require('rsvp').Promise;
+let Promise = require('es6-promise').Promise;
 Tail = require('tail').Tail;
 
 function check(path) {

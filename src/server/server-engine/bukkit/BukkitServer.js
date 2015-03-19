@@ -1,6 +1,7 @@
 let path = require('path');
-let AppServer = require('../AppServer');
+let spawn = require('child_process').spawn;
 let extend = require('extend');
+let AppServer = require('../AppServer');
 
 class BukkitServer extends AppServer {
 
@@ -12,14 +13,6 @@ class BukkitServer extends AppServer {
         return path.resolve(this.path, 'server.log');
     }
 
-    handleOutData(data) {
-        console.debug('Bukkit Server:', data);
-    }
-
-    handleOutError(data) {
-        console.error('Bukkit Server error:', data);
-    }
-
     spawnServer() {
         let args = [];
         args.push(`-Xmx${this.memory}M`);
@@ -27,8 +20,10 @@ class BukkitServer extends AppServer {
         args.push('-jar');
         args.push(this.jar);
 
+        console.info('Executing server with command: java', args.join(' '));
         return spawn('java', args, {
-            cwd: this.path
+            cwd: this.getExecutionDir(),
+            stdio: this.stdio
         });
     }
 }
@@ -36,7 +31,7 @@ class BukkitServer extends AppServer {
 BukkitServer.install = function install(path) {
     return new BukkitServer({
         path: path,
-        jar: '',
+        jar: 'D:\\Apps\\SpigotBuild\\spigot-1.8.jar',
         port: 8000,
         memory: 1024
     });
