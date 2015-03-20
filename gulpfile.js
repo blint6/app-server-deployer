@@ -29,7 +29,7 @@ var getBundleName = function() {
 };
 
 var paths = {
-    js: ['src/server/**/*.js'],
+    js: ['src/common/**/*.js', 'src/component/**/*.js', 'src/server/**/*.js'],
     asset: ['src/**/*.*', '!src/**/*.js'],
     build: 'build/node_modules/minode',
 };

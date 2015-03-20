@@ -1,6 +1,6 @@
 let io = require('socket.io-client');
 let server = io('http://localhost:3000/');
-let MinodeDispatcher = require('../dispatcher/MinodeDispatcher');
+let MinodeDispatcher = require('../dispatcher');
 
 server.on('dispatch', MinodeDispatcher.handleServerAction.bind(MinodeDispatcher));
 

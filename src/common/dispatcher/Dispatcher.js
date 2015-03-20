@@ -37,8 +37,8 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
             // See waitFor() for why this might be useful.
             Promise.resolve(callback(payload)).then(function() {
                 resolves[i](payload);
-            }, function() {
-                rejects[i](new Error('Dispatcher callback unsuccessful'));
+            }, function(err) {
+                rejects[i](new Error('Dispatcher callback unsuccessful', err));
             });
         });
         _promises = [];

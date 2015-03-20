@@ -1,6 +1,6 @@
 let React = require('react');
 let ConsoleStore = require('./ConsoleStore');
-let ConsoleActions = require('./ConsoleActions');
+let ConsoleActions = require('./ConsoleActionsWeb');
 
 let Console = React.createClass({
 

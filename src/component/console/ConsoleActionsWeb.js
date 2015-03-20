@@ -1,4 +1,4 @@
-let MinodeDispatcher = require('../../web/dispatcher/MinodeDispatcher');
+let MinodeDispatcher = require('../../web/dispatcher');
 let ConsoleConstants = require('./ConsoleConstants');
 
 let ConsoleActions = {

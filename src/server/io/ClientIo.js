@@ -1,0 +1,30 @@
+let socketio = require('socket.io');
+let dispatcher = require('../dispatcher');
+
+module.exports = function(server) {
+
+    let io = socketio.listen(server);
+
+    io.on('connection', function(client) {
+        console.info('Got a handshake');
+        dispatcher.handleClientConnection(client);
+    });
+
+    io.on('message', dispatcher.handleClientAction.bind(dispatcher));
+
+    dispatcher.registerServiceActions(function(p) {
+
+        if (p.client) {
+            let clients = p.client;
+
+            if (!Array.isArray(clients))
+                clients = [clients];
+
+            clients.forEach(client => client.emit('dispatch', p.action));
+        }
+
+        return true;
+    });
+
+    return io;
+};

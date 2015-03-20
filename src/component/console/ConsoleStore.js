@@ -1,6 +1,6 @@
 let EventEmitter = require('events').EventEmitter;
 let assign = require('object-assign');
-let MinodeDispatcher = require('../../web/dispatcher/MinodeDispatcher');
+let MinodeDispatcher = require('../../web/dispatcher');
 let ConsoleConstants = require('./ConsoleConstants');
 
 let CHANGE_EVENT = 'change';

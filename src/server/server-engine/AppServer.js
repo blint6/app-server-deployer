@@ -2,6 +2,9 @@ let fs = require('fs');
 let path = require('path');
 let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
+let Tail = require('tail').Tail;
+let ConsoleAction = require('minode/component/console/ConsoleActionsSrv');
+let dispatcher = require('../dispatcher');
 
 
 class AppServer extends EventEmitter {
@@ -12,39 +15,56 @@ class AppServer extends EventEmitter {
         }
 
         this.createServerFolders()
-            .then(() => {
-                console.log('Preparing log files');
-                return Promise.all([
-                    0,
-                    new Promise((resolve, reject) => fs.open(this.getLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    })),
-                    new Promise((resolve, reject) => fs.open(this.getErrorLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    }))
-                ]).then(stdio => {
-                    this.stdio = stdio;
-                });
-            })
-            .then(() => {
-                console.info('Spawning server process');
-                this.process = this.spawnServer();
 
-                // Process terminated
-                this.process.on('close', function(code, signal) {
-                    delete this.process;
-
-                    if (typeof this.handleClose === 'function')
-                        this.handleClose(code, signal);
-                }.bind(this));
-            })
-            .then(() => {
-                console.info('Server process started');
-            }, err => {
-                console.error('Failed to start the server', err);
+        .then(() => {
+            console.log('Preparing log files');
+            return Promise.all([
+                0,
+                new Promise((resolve, reject) => fs.open(this.getLog(), 'a', '0772', (err, stream) => {
+                    if (err) reject(err);
+                    else resolve(stream);
+                })),
+                new Promise((resolve, reject) => fs.open(this.getErrorLog(), 'a', '0772', (err, stream) => {
+                    if (err) reject(err);
+                    else resolve(stream);
+                }))
+            ]).then(stdio => {
+                this.stdio = stdio;
             });
+        })
+
+        .then(() => {
+            console.info('Spawning server process');
+            this.process = this.spawnServer();
+
+            // Process terminated
+            this.process.on('close', function(code, signal) {
+                delete this.process;
+
+                if (typeof this.handleClose === 'function')
+                    this.handleClose(code, signal);
+            }.bind(this));
+
+            // Log notifier
+            let clients = [];
+            dispatcher.registerClientConnections(function(payload) {
+                clients.push(payload.client);
+                return true;
+            });
+
+            let tail = new Tail(this.getLog()),
+                i = 0;
+            tail.on('line', function(data) {
+                ConsoleAction.newMessages(clients, i, data);
+                i += 1;
+            });
+        })
+
+        .then(() => {
+            console.info('Server process started');
+        }, err => {
+            console.error('Failed to start the server', err);
+        });
     }
 
     stop() {
