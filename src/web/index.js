@@ -3,7 +3,7 @@ require('./io/ServerIo');
 let React = require('react');
 let Router = require('react-router');
 let Layout = require('./layout');
-let Console = require('./console/Console');
+let Console = require('../component/console');
 let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let NotFoundRoute = Router.NotFoundRoute;
