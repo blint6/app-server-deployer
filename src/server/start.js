@@ -23,9 +23,9 @@ app.set('view engine', 'html');
 app.enable('jsonp callback');
 
 app.use('/vendor', express.static(process.cwd() + '/bower_components'));
-app.use('/script/minode.js', express.static(process.cwd() + '/build/web/minode.js'));
+app.use('/script/minode.js', express.static(require.resolve('minode/web/minode.js')));
 
-let indexPath = path.resolve(__dirname, '../web/index.jade');
+let indexPath = require.resolve('minode/web/index.jade');
 app.use('/', function(req, res) {
     res.render(indexPath);
 });

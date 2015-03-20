@@ -31,6 +31,7 @@ var getBundleName = function() {
 var paths = {
     js: ['src/server/**/*.js'],
     asset: ['src/**/*.*', '!src/**/*.js'],
+    build: 'build/node_modules/minode',
 };
 
 function bundle(bundler) {
@@ -45,7 +46,7 @@ function bundle(bundler) {
         })) // loads map from browserify file
         .pipe(sourcemaps.write('./')) // writes .map file
         //
-        .pipe(gulp.dest('./build/web'));
+        .pipe(gulp.dest(paths.build + '/web'));
 }
 
 gulp.task('clean', function(cb) {
@@ -60,14 +61,14 @@ gulp.task('transpile', function() {
     return gulp.src(paths.js, {
             base: 'src'
         })
-        .pipe(changed('build'))
+        .pipe(changed(paths.build))
         .pipe(sourcemaps.init())
         .pipe(insert.prepend('\'use strict\';'))
         .pipe(jshint())
         .pipe(jshint.reporter('default'))
         .pipe(babel())
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest('build'))
+        .pipe(gulp.dest(paths.build))
         .pipe(livereload());
 });
 
@@ -75,8 +76,8 @@ gulp.task('copy', function() {
     return gulp.src(paths.asset, {
             base: 'src'
         })
-        .pipe(changed('build'))
-        .pipe(gulp.dest('build'))
+        .pipe(changed(paths.build))
+        .pipe(gulp.dest(paths.build))
         .pipe(livereload());
 });
 
@@ -117,8 +118,8 @@ gulp.task('run', ['bundle', 'copy', 'transpile'], function() {
     gulp.watch(paths.asset, ['copy']);
 
     nodemon({
-            script: './build/server/start',
-            watch: ['build/server', 'node_modules'],
+            script: './' + paths.build + '/server/start',
+            watch: [paths.build + '/server', 'node_modules'],
             ignore: 'src',
             nodeArgs: ['--debug=9999']
         })
