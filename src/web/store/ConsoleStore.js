@@ -1,7 +1,7 @@
 let EventEmitter = require('events').EventEmitter;
 let assign = require('object-assign');
 let MinodeDispatcher = require('../dispatcher/MinodeDispatcher');
-let ChatConstants = require('../constant/ChatConstants');
+let ConsoleConstants = require('../constant/ConsoleConstants');
 
 let CHANGE_EVENT = 'change';
 
@@ -57,7 +57,7 @@ let ChatStore = assign({}, EventEmitter.prototype, {
         let action = payload.action;
 
         switch (action.actionType) {
-            case ChatConstants.NEW_MESSAGES:
+            case ConsoleConstants.NEW_MESSAGES:
                 if (action.messages && action.messages.length) {
                     addMessages(action.messages);
                     ChatStore.emitChange();

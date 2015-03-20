@@ -1,17 +1,17 @@
 let MinodeDispatcher = require('../dispatcher/MinodeDispatcher');
-let ChatConstants = require('../constant/ChatConstants');
+let ConsoleConstants = require('../constant/ConsoleConstants');
 
-let ChatActions = {
+let ConsoleActions = {
 
     /**
      * @param  {string} text
      */
     create: function(text) {
         MinodeDispatcher.handleViewAction({
-            actionType: ChatConstants.NEW_MESSAGES,
+            actionType: ConsoleConstants.NEW_MESSAGES,
             text: text
         });
     },
 }
 
-module.exports = ChatActions;
+module.exports = ConsoleActions;

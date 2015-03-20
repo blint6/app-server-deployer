@@ -46,7 +46,7 @@ io.on('connection', socket => {
         i = 0;
     tail.on('line', function(data) {
         socket.emit('dispatch', {
-            actionType: 'Chat.NEW_MESSAGES',
+            actionType: 'Console.NEW_MESSAGES',
             messages: [{
                 id: i,
                 content: data

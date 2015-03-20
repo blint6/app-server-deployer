@@ -1,21 +1,21 @@
 let React = require('react');
-let ChatStore = require('../store/ChatStore');
-let ChatActions = require('../action/ChatActions');
+let ConsoleStore = require('../store/ConsoleStore');
+let ConsoleActions = require('../action/ConsoleActions');
 
-let Chat = React.createClass({
+let Console = React.createClass({
 
 	getInitialState: function() {
 		return {
-			lines: ChatStore.getMessages()
+			lines: ConsoleStore.getMessages()
 		};
 	},
 
 	componentDidMount: function() {
-		ChatStore.addChangeListener(this._onNewMessages);
+		ConsoleStore.addChangeListener(this._onNewMessages);
 	},
 
 	componentWillUnmount: function() {
-		ChatStore.removeChangeListener(this._onNewMessages);
+		ConsoleStore.removeChangeListener(this._onNewMessages);
 	},
 
     render: function() {
@@ -33,9 +33,9 @@ let Chat = React.createClass({
 
     _onNewMessages: function(messages) {
 		this.setState({
-			lines: ChatStore.getMessages()
+			lines: ConsoleStore.getMessages()
 		});
     },
 });
 
-module.exports = Chat;
+module.exports = Console;
