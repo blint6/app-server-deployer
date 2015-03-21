@@ -1,33 +1,54 @@
+let Promise = require('es6-promise').Promise;
 let dispatcher = require('./dispatcher');
 
 let _services = {};
 
 let Subscriber = {
 
-    register: function(room, cb) {
+    register: function(room, options) {
         _services[room] = {
             clients: [],
-            cb: cb
+            publish: (typeof options.publish === 'function') && options.publish,
+            onSubscribe: (typeof options.onSubscribe === 'function') && options.onSubscribe,
+            onFirstSubscriber: (typeof options.onFirstSubscriber === 'function') && options.onFirstSubscriber,
+            onAllUnsubscribed: (typeof options.onAllUnsubscribed === 'function') && options.onAllUnsubscribed,
         };
     },
 
     subscribe: function(room, client) {
-        if (_services[room])
-            _services[room].clients.push(client);
+        let svc = _services[room];
+
+        if (svc) {
+            svc.clients.push(client);
+            let chain = Promise.resolve();
+
+            if (svc.clients.length === 1 && svc.onFirstSubscriber)
+                chain.then(() => svc.onFirstSubscriber());
+            if (svc.onSubscribe)
+                chain.then(() => svc.onSubscribe(client));
+        }
     },
 
     unsubscribe: function(room, client) {
-        if (_services[room]) {
-            let i = _services[room].clients.indexOf(client);
+        let svc = _services[room];
+
+        if (svc) {
+            let i = svc.clients.indexOf(client);
 
             if (i > -1)
-                _services[room].clients.splice(i, 1);
+                svc.clients.splice(i, 1);
         }
     },
 
     publish: function(room, data) {
-        if (_services[room])
-            return _services[room].cb(_services[room].clients, data);
+        let svc = _services[room];
+
+        if (svc)
+            return svc.publish(svc.clients, data);
+    },
+
+    getClients: function(room) {
+        return _services[room] && _services[room].clients;
     }
 };
 
