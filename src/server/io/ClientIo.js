@@ -1,5 +1,6 @@
 let socketio = require('socket.io');
 let dispatcher = require('../dispatcher');
+let subscriber = require('../subscriber');
 
 module.exports = function(server) {
 
@@ -8,9 +9,9 @@ module.exports = function(server) {
     io.on('connection', function(client) {
         console.info('Got a handshake');
         dispatcher.handleClientConnection(client);
-    });
 
-    io.on('message', dispatcher.handleClientAction.bind(dispatcher));
+    	client.on('message', dispatcher.handleClientAction.bind(dispatcher, client));
+    });
 
     dispatcher.registerServiceActions(function(p) {
 

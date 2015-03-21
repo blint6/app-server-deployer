@@ -31,9 +31,10 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
      * A bridge function between the client and the dispatcher.
      * @param  {object} action The data coming from the view.
      */
-    handleClientAction: function(action) {
+    handleClientAction: function(client, action) {
         this.dispatch({
             source: 'CLIENT_ACTION',
+            client: client,
             action: action
         });
     },

@@ -21,7 +21,6 @@ let MinodeDispatcher = assign({}, Dispatcher.prototype, {
      * @param  {object} action The data coming from the view.
      */
     handleServerAction: function(action) {
-        console.log('Received server action', action);
         this.dispatch({
             source: 'SERVER_ACTION',
             action: action

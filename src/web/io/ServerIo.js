@@ -1,10 +1,10 @@
 let io = require('socket.io-client');
 let server = io('http://localhost:3000/');
-let MinodeDispatcher = require('../dispatcher');
+let dispatcher = require('../dispatcher');
 
-server.on('dispatch', MinodeDispatcher.handleServerAction.bind(MinodeDispatcher));
+server.on('dispatch', dispatcher.handleServerAction.bind(dispatcher));
 
-MinodeDispatcher.register(function(payload) {
+dispatcher.register(function(payload) {
     if (payload.sendToServer) {
         server.emit('message', payload.action);
     }

@@ -1,20 +1,30 @@
-let MinodeDispatcher = require('../../server/dispatcher');
+let Tail = require('tail').Tail;
+let dispatcher = require('../../server/dispatcher');
+let subscriber = require('../../server/subscriber');
 let ConsoleConstants = require('./ConsoleConstants');
 
 let ConsoleActions = {
 
-    /**
-     * @param  {integer} id
-     * @param  {Array} content
-     */
-    newMessages: function(clients, id, content) {
-        MinodeDispatcher.handleServiceAction({
-            actionType: ConsoleConstants.NEW_MESSAGES,
-            messages: [{
-                id: id,
-                content: content
-            }]
-        }, clients);
+    registerServer: function(server) {
+        let room = ConsoleConstants.SUB + server.path;
+
+        subscriber.register(room, function(clients, message) {
+            dispatcher.handleServiceAction({
+                actionType: ConsoleConstants.NEW_MESSAGES,
+                messages: [message]
+            }, clients);
+        });
+
+        let tail = new Tail(server.getLog()),
+            i = 0;
+
+        tail.on('line', function(data) {
+            subscriber.publish(room, {
+                id: i,
+                content: data
+            });
+            i += 1;
+        });
     },
 };
 

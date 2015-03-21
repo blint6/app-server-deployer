@@ -2,9 +2,7 @@ let fs = require('fs');
 let path = require('path');
 let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
-let Tail = require('tail').Tail;
-let ConsoleAction = require('minode/component/console/ConsoleActionsSrv');
-let dispatcher = require('../dispatcher');
+let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
 
 class AppServer extends EventEmitter {
@@ -46,18 +44,7 @@ class AppServer extends EventEmitter {
             }.bind(this));
 
             // Log notifier
-            let clients = [];
-            dispatcher.registerClientConnections(function(payload) {
-                clients.push(payload.client);
-                return true;
-            });
-
-            let tail = new Tail(this.getLog()),
-                i = 0;
-            tail.on('line', function(data) {
-                ConsoleAction.newMessages(clients, i, data);
-                i += 1;
-            });
+            ConsoleActions.registerServer(this);
         })
 
         .then(() => {

@@ -1,6 +1,6 @@
 let EventEmitter = require('events').EventEmitter;
 let assign = require('object-assign');
-let MinodeDispatcher = require('../../web/dispatcher');
+let dispatcher = require('../../web/dispatcher');
 let ConsoleConstants = require('./ConsoleConstants');
 
 let CHANGE_EVENT = 'change';
@@ -53,7 +53,7 @@ let ChatStore = assign({}, EventEmitter.prototype, {
         this.removeListener(CHANGE_EVENT, callback);
     },
 
-    dispatcherIndex: MinodeDispatcher.register(function(payload) {
+    dispatcherIndex: dispatcher.register(function(payload) {
         let action = payload.action;
 
         switch (action.actionType) {

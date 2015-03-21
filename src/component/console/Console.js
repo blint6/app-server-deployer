@@ -11,10 +11,12 @@ let Console = React.createClass({
 	},
 
 	componentDidMount: function() {
+		ConsoleActions.subscribe('testBukkit');
 		ConsoleStore.addChangeListener(this._onNewMessages);
 	},
 
 	componentWillUnmount: function() {
+		ConsoleActions.unsubscribe('testBukkit');
 		ConsoleStore.removeChangeListener(this._onNewMessages);
 	},
 
