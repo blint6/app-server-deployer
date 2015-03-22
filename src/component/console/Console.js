@@ -5,15 +5,8 @@ let ConsoleActions = require('./ConsoleActionsWeb');
 
 let style = {};
 
-style.header = {
-	height: 50,
-	margin: 10,
-};
-
 style.consoleWrapper = {
 	height: '100%',
-	marginTop: -70,
-	paddingTop: 70,
 	marginBottom: -36,
 	paddingBottom: 36,
 };
@@ -37,7 +30,6 @@ style.input = {
 	height: 36,
 };
 
-let header = (<h2 style={style.header}>Console</h2>);
 let input = (<Input type="text" placeholder="Enter command" style={style.input} />);
 
 let Console = React.createClass({
@@ -65,7 +57,6 @@ let Console = React.createClass({
 
         return (
         	<div className="h100">
-	        	{header}
 	        	<div style={style.consoleWrapper}>
 	        		<ul style={style.console}>
 	        			{lines}
