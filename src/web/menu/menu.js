@@ -5,7 +5,7 @@ let NavItemLink = require('react-router-bootstrap/lib/NavItemLink');
 module.exports = React.createClass({
     render: function() {
         return (<Nav bsStyle="pills" stacked>
-        	<NavItemLink to="chat">Chat</NavItemLink>
+        	<NavItemLink to="console">Console</NavItemLink>
     	</Nav>);
     }
 });

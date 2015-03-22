@@ -73,6 +73,7 @@
     // Custom Globals
     "globals": {
       "React"     : true,
+      "Promise"   : true,
       "define"      : false,
       "jasmine"     : false,
       "require"     : false,

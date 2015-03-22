@@ -10,6 +10,10 @@ console.info('Minode start');
 
 let app = express();
 
+let status404 = function(req, res) {
+	res.status(404).end();
+};
+
 //dbConnect('mongodb://localhost/minode');
 
 // Only use logger for development environment
@@ -22,7 +26,13 @@ app.set('view engine', 'html');
 app.enable('jsonp callback');
 
 app.use('/vendor', express.static(process.cwd() + '/bower_components'));
+
 app.use('/script/minode.js', express.static(require.resolve('minode/web/minode.js')));
+app.use('/script/minode.js.map', express.static(require.resolve('minode/web/minode.js.map')));
+app.use('/script', status404);
+
+app.use('/style/layout.css', express.static(require.resolve('minode/web/layout.css')));
+app.use('/style', status404);
 
 let indexPath = require.resolve('minode/web/index.jade');
 app.use('/', function(req, res) {

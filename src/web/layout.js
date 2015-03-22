@@ -9,13 +9,13 @@ let Menu = require('./menu/menu');
 
 module.exports = React.createClass({
     render: function() {
-        return (<Grid>
-		<Row>
-			<Col md={3}><Banner/></Col>
+        return (<Grid fluid>
+		<Row className="headerRow">
+			<Col md={12}><Banner/></Col>
 		</Row>
-		<Row>
-			<Col md={3}><Menu/></Col>
-			<Col md={9}><RouteHandler/></Col>
+		<Row className="contentRow">
+			<Col md={3} lg={2} styleClass="no-float"><Menu/></Col>
+			<Col md={9} lg={10} styleClass="no-float"><RouteHandler/></Col>
 		</Row>
 	</Grid>);
     }

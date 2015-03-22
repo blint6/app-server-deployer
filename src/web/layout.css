@@ -1,0 +1,33 @@
+body, html {
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+.no-float {
+    float: none;
+}
+
+.h100 {
+    height: 100%;
+}
+
+.container-fluid {
+    width: 100%;
+}
+
+.container-fluid > .headerRow {
+    height: 70px;
+}
+
+.container-fluid > .contentRow {
+    height: 100%;
+    margin-top: -70px;
+    padding-top: 70px;
+}
+
+.container-fluid > .row > div {
+    height: 100%;
+	/* overflow-y: auto; */
+}

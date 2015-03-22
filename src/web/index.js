@@ -10,7 +10,7 @@ let NotFoundRoute = Router.NotFoundRoute;
 
 let routes = <Route handler={Layout} path="/">
     	<DefaultRoute handler={Console}/>
-    	<Route name="chat" handler={Console}/>
+    	<Route name="console" handler={Console}/>
 	</Route>;
 
 Router.run(routes, function(Handler) {

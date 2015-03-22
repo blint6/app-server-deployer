@@ -1,7 +1,6 @@
 let fs = require('fs');
 let spawn = require('child_process').spawn;
 let Promise = require('es6-promise').Promise;
-Tail = require('tail').Tail;
 
 function check(path) {
     return new Promise((resolve, reject) => {
@@ -19,7 +18,7 @@ function check(path) {
             } else {
                 // Directory exists
                 if (files.length)
-                    reject(Error(`Server directory is not empty (${path})`, err))
+                    reject(Error(`Server directory is not empty (${path})`, err));
                 else
                     resolve();
             }
@@ -62,3 +61,4 @@ function install(engine, path, options) {
 
 module.exports.check = check;
 module.exports.install = install;
+module.exports.installJar = installJar;
