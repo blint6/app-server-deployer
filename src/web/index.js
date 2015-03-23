@@ -2,16 +2,22 @@ require('./io/ServerIo');
 
 let React = require('react');
 let Router = require('react-router');
-let Layout = require('./layout');
-let Console = require('../component/console');
 let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
-let NotFoundRoute = Router.NotFoundRoute;
+let Redirect = Router.Redirect;
+let Layout = require('./layout');
+let minodeModules = require('./modules');
 
-let routes = <Route handler={Layout} path="/">
-    	<DefaultRoute handler={Console}/>
-    	<Route name="console" handler={Console}/>
-	</Route>;
+let routeElements = minodeModules.map((mod, i) => (
+	<Route key={i} name={mod.name} handler={mod.handler} />
+));
+
+let routes = (
+	<Route handler={Layout} path="/">
+		{routeElements}
+		<Redirect from="/" to="console" />
+	</Route>
+);
 
 Router.run(routes, function(Handler) {
     React.render(<Handler/>, document.body);
