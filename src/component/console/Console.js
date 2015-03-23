@@ -15,7 +15,7 @@ style.console = {
 	background: '#272822',
 	color: '#eeeeee',
 	fontFamily: 'Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace',
-	padding: '10 1em',
+	padding: '8 1em 4 1em',
 	margin: '0',
 	height: '100%',
 	overflow: 'auto',
@@ -23,6 +23,7 @@ style.console = {
 
 style.line = {
 	listStyleType: 'none',
+	lineHeight: '1.12em',
 };
 
 style.input = {
@@ -50,6 +51,11 @@ let Console = React.createClass({
 		ConsoleStore.removeChangeListener(this._onNewMessages);
 	},
 
+    componentWillUpdate: function() {
+    	let consoleDom = this.refs.console.getDOMNode();
+    	this._needsScrollDown = consoleDom.scrollHeight === (consoleDom.scrollTop + consoleDom.offsetHeight);
+    },
+
     render: function() {
     	let lines = this.state.lines.map(line => {
     		return (<li key={line.id} style={style.line}>{line.content}</li>);
@@ -58,13 +64,22 @@ let Console = React.createClass({
         return (
         	<div className="h100">
 	        	<div style={style.consoleWrapper}>
-	        		<ul style={style.console}>
+	        		<ul style={style.console} ref="console">
 	        			{lines}
 	        		</ul>
 	        	</div>
 	        	{input}
 	        </div>
         );
+    },
+
+    componentDidUpdate: function() {
+		let consoleDom = this.refs.console.getDOMNode();	
+
+    	if (this._needsScrollDown || !this._autoscrolled && consoleDom.scrollHeight > consoleDom.offsetHeight) {
+    		consoleDom.scrollTop = consoleDom.scrollHeight;
+    		this._autoscrolled = true;
+       	}
     },
 
     _onNewMessages: function(messages) {
