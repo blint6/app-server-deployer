@@ -14,7 +14,7 @@ let status404 = function(req, res) {
 	res.status(404).end();
 };
 
-//dbConnect('mongodb://localhost/minode');
+dbConnect('mongodb://localhost/minode');
 
 // Only use logger for development environment
 if (true || process.env.NODE_ENV === 'development') {
