@@ -3,14 +3,14 @@ let mongoose = require('mongoose');
 
 module.exports = function connect(connectionString) {
     return new Promise(function(resolve, reject) {
-        let db = mongoose.connect(connectionString);
+        mongoose.connect(connectionString);
         let resolved = false;
 
-        db.once('open', function() {
+        mongoose.connection.once('open', function() {
             resolved = true;
-            resolve(db);
+            resolve(mongoose.connection);
         });
-        db.on('error', function(err) {
+        mongoose.connection.on('error', function(err) {
             console.error('Connection error:', err);
 
             if (!resolved)
