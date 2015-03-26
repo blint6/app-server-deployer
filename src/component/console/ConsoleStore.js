@@ -7,10 +7,6 @@ let CHANGE_EVENT = 'change';
 
 let _chat;
 
-/**
- * Create a TODO item.
- * @param {string} text The content of the TODO
- */
 function addMessages(messages) {
     messages.forEach(message => {
 

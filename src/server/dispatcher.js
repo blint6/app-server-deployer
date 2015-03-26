@@ -20,7 +20,7 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
     registerServiceActions: function(cb) {
         return this.register(function(payload) {
             if (payload.source === 'SERVICE_ACTION') {
-                return cb(payload);
+                return cb(payload, payload.action);
             }
 
             return true;
@@ -42,7 +42,7 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
     registerClientActions: function(cb) {
         return this.register(function(payload) {
             if (payload.source === 'CLIENT_ACTION') {
-                return cb(payload);
+                return cb(payload, payload.action);
             }
 
             return true;

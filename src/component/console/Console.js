@@ -1,5 +1,6 @@
 let React = require('react');
 let Input = require('react-bootstrap/lib/Input');
+let mainStore = require('../../web/mainStore');
 let ConsoleStore = require('./ConsoleStore');
 let ConsoleActions = require('./ConsoleActionsWeb');
 
@@ -33,9 +34,13 @@ style.input = {
 
 let Console = React.createClass({
 
-	getDefaultProps: function() {
+	contextTypes: {
+		router: React.PropTypes.func
+	},
+
+	componentWillReceiveProps: function() {
 		return {
-			serverId: 'testBukkit'
+			serverId: this.context.router.getParams().serverName;
 		};
 	},
 
@@ -86,7 +91,7 @@ let Console = React.createClass({
        	}
     },
 
-    _onNewMessages: function(messages) {
+    _onNewMessages: function() {
 		this.setState({
 			lines: ConsoleStore.getMessages()
 		});

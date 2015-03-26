@@ -6,6 +6,8 @@ let Route = Router.Route;
 let DefaultRoute = Router.DefaultRoute;
 let Redirect = Router.Redirect;
 let Layout = require('./layout');
+let LayoutContentDefault = require('./layoutContentDefault');
+let LayoutContentServer = require('./layoutContentServer');
 let minodeModules = require('./modules');
 
 let routeElements = minodeModules.map((mod, i) => (
@@ -14,7 +16,10 @@ let routeElements = minodeModules.map((mod, i) => (
 
 let routes = (
 	<Route handler={Layout} path="/">
-		{routeElements}
+		<DefaultRoute handler={LayoutContentDefault} />
+		<Route handler={LayoutContentServer} path="server/:serverName">
+			{routeElements}
+		</Route>
 	</Route>
 );
 

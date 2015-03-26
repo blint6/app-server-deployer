@@ -24,9 +24,18 @@ body, html {
     color: #f0f0f0;
 }
 
+#headerRow header > * {
+    float: left;
+    margin: 10px;
+}
+
 #headerRow h1 {
     margin: 10px 0;
     font-size: 1.3em;
+}
+
+#headerRow input, #headerRow select {
+    color: #262321;
 }
 
 #contentRow {

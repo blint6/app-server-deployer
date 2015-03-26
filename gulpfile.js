@@ -109,7 +109,7 @@ gulp.task('test', ['transpile'], function() {
         .pipe(mocha());
 });
 
-gulp.task('run', ['bundle', 'copy', 'transpile'], function() {
+gulp.task('demo', ['bundle', 'copy', 'transpile'], function() {
     livereload({
         start: true
     });
@@ -118,7 +118,7 @@ gulp.task('run', ['bundle', 'copy', 'transpile'], function() {
     gulp.watch(paths.asset, ['copy']);
 
     nodemon({
-            script: './' + paths.build + '/server/start',
+            script: './' + paths.build + '/server/demo',
             watch: [paths.build + '/server', 'node_modules'],
             ignore: 'src',
             nodeArgs: ['--debug=9999']
