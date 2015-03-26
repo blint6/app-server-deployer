@@ -15,7 +15,6 @@ let routeElements = minodeModules.map((mod, i) => (
 let routes = (
 	<Route handler={Layout} path="/">
 		{routeElements}
-		<Redirect from="/" to="console" />
 	</Route>
 );
 

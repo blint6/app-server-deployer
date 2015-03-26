@@ -31,9 +31,13 @@ style.input = {
 	height: 36,
 };
 
-let input = (<Input type="text" placeholder="Enter command" style={style.input} />);
-
 let Console = React.createClass({
+
+	getDefaultProps: function() {
+		return {
+			serverId: 'testBukkit'
+		};
+	},
 
 	getInitialState: function() {
 		return {
@@ -42,12 +46,12 @@ let Console = React.createClass({
 	},
 
 	componentDidMount: function() {
-		ConsoleActions.subscribe('testBukkit');
+		ConsoleActions.subscribe(this.props.serverId);
 		ConsoleStore.addChangeListener(this._onNewMessages);
 	},
 
 	componentWillUnmount: function() {
-		ConsoleActions.unsubscribe('testBukkit');
+		ConsoleActions.unsubscribe(this.props.serverId);
 		ConsoleStore.removeChangeListener(this._onNewMessages);
 	},
 
@@ -68,7 +72,7 @@ let Console = React.createClass({
 	        			{lines}
 	        		</ul>
 	        	</div>
-	        	{input}
+        		<Input type="text" placeholder="Enter command" style={style.input} onKeyDown={this._onKeyDown} />
 	        </div>
         );
     },
@@ -86,6 +90,13 @@ let Console = React.createClass({
 		this.setState({
 			lines: ConsoleStore.getMessages()
 		});
+    },
+
+    _onKeyDown: function(e) {
+		if (event.keyCode === 13) { // Enter Pressed
+			ConsoleActions.sendMessage(this.props.serverId, e.target.value);
+			e.target.value = '';
+		}
     },
 });
 

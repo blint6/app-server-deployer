@@ -11,12 +11,12 @@ module.exports = React.createClass({
     render: function() {
         return (
         	<Grid fluid>
-				<Row className="headerRow">
+				<Row id="headerRow">
 					<Col md={12}><Banner/></Col>
 				</Row>
-				<Row className="contentRow">
-					<Col md={3} lg={2} styleClass="no-float"><Menu/></Col>
-					<Col md={9} lg={10} styleClass="no-float"><RouteHandler/></Col>
+				<Row id="contentRow">
+					<Col md={3} lg={2} className="well"><Menu/></Col>
+					<Col md={9} lg={10} id="contentCell"><RouteHandler/></Col>
 				</Row>
 			</Grid>
 		);

@@ -9,7 +9,7 @@ module.exports = React.createClass({
 		let menuElements = minodeModules.map((mod, i) => (
         	<NavItemLink key={i} to={mod.uri}>
         		<span className={mod.menuClassName} />
-        		&nbsp;
+        		&nbsp;&nbsp;
         		{mod.menuName}
         	</NavItemLink>
 		));

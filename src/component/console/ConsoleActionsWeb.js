@@ -13,6 +13,14 @@ let ConsoleActions = {
         });
     },
 
+    sendMessage: function(serverId, message) {
+        dispatcher.handleViewAction({
+            actionType: ConsoleConstants.SEND_MESSAGE,
+            serverId: serverId,
+            message: message,
+        }, true);
+    },
+
     subscribe: function(serverId) {
     	dispatcher.handleViewAction({
             actionType: 'sub',
@@ -21,7 +29,7 @@ let ConsoleActions = {
     },
 
     unsubscribe: function(serverId) {
-    	dispatcher.handleViewAction({
+        dispatcher.handleViewAction({
             actionType: 'unsub',
             sub: ConsoleConstants.SUB + serverId
         }, true);

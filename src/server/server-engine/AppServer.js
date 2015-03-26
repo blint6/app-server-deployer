@@ -27,7 +27,7 @@ class AppServer extends EventEmitter {
         .then(() => {
             console.log('Preparing log files');
             return Promise.all([
-                0,
+                'pipe',
                 new Promise((resolve, reject) => fs.open(this.getLog(), 'a', '0772', (err, stream) => {
                     if (err) reject(err);
                     else resolve(stream);
@@ -64,6 +64,11 @@ class AppServer extends EventEmitter {
         });
     }
 
+    sendMessage(message) {
+        //console.log(JSON.stringify(this.stdio[0]))
+        this.process.stdio[0].write(message + '\n');
+    }
+
     stop() {
         if (this.process) {
             console.info('Terminating server');
@@ -79,6 +84,10 @@ class AppServer extends EventEmitter {
                 console.info('Server closed successfully');
         } else
             console.error('Server exited with code', code);
+    }
+
+    getName() {
+        return this._appServerDef.name;
     }
 
     getExecutionDir() {

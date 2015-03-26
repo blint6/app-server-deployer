@@ -62,6 +62,12 @@ let ConsoleActions = {
             },
         });
 
+        dispatcher.registerClientActions(function(payload) {
+            let action = payload.action;
+            if (action.actionType === ConsoleConstants.SEND_MESSAGE && action.serverId === server.getName()) {
+                server.sendMessage(action.message);
+            }
+        });
     },
 };
 

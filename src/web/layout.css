@@ -17,17 +17,29 @@ body, html {
     width: 100%;
 }
 
-.container-fluid > .headerRow {
-    height: 70px;
+#headerRow {
+    height: 40px;
+    background: #262321;
+    border-bottom: #f0f0f0;
+    color: #f0f0f0;
 }
 
-.container-fluid > .contentRow {
+#headerRow h1 {
+    margin: 10px 0;
+    font-size: 1.3em;
+}
+
+#contentRow {
     height: 100%;
-    margin-top: -70px;
-    padding-top: 70px;
+    margin-top: -40px;
+    padding-top: 40px;
 }
 
 .container-fluid > .row > div {
     height: 100%;
 	/* overflow-y: auto; */
+}
+
+#contentCell {
+    padding: 10px;
 }
