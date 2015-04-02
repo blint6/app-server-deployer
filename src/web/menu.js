@@ -7,11 +7,11 @@ let mainStore = require('./mainStore');
 module.exports = React.createClass({
 
     contextTypes: {
-        router: React.PropTypes.func
+        router: React.PropTypes.func.isRequired
     },
 
     render: function () {
-        let serverName = this.context.router.getParams().serverName;
+        let serverName = this.context.router.getCurrentParams().serverName;
 
         let menuElements = minodeModules.map((mod, i) => (
             <NavItemLink key={i} to={mod.uri} params={{ serverName: serverName }}>

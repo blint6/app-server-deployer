@@ -4,6 +4,10 @@ let mainStore = require('../mainStore');
 
 let ServerPicker = React.createClass({
 
+    contextTypes: {
+        router: React.PropTypes.func.isRequired
+    },
+
     getInitialState: function () {
         return {
             servers: []
@@ -24,23 +28,35 @@ let ServerPicker = React.createClass({
         });
 
         return (
-            <select placeholder='Pick server' onChange={this.onChange}>
+            <select placeholder='Pick server' onChange={this.onChange} value={this.state.currentServerName}>
                 {servers}
             </select>
         );
     },
 
     onServersInfo: function () {
+        let currentServer = this.context.router.getCurrentParams().serverName;
+
+        if (!currentServer && mainStore.servers.length) {
+            currentServer = mainStore.servers[0].name;
+            this.context.router.transitionTo('dashboard', {serverName: currentServer});
+        }
+
         this.setState({
-            servers: mainStore.servers
+            servers: mainStore.servers,
+            currentServerName: currentServer
         });
     },
 
     onChange: function (e) {
         let serverName = e.target.value;
 
-        if (serverName)
-            mainStore.pickServer(serverName);
+        if (serverName && mainStore.pickServer(serverName)) {
+            this.context.router.transitionTo('dashboard', {serverName: serverName});
+            this.setState({
+                currentServerName: serverName
+            });
+        }
     },
 });
 

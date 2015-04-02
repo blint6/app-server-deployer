@@ -11,8 +11,9 @@ let ServerPickerStore = assign({}, EventEmitter.prototype, {
     pickServer: function(serverName) {
         if (this.serverByName[serverName]) {
             this.currentServer = this.serverByName[serverName];
-            window.location.hash = '#server/' + serverName + '/dashboard';
+            //window.location.hash = '#server/' + serverName + '/dashboard';
             this.emitPickServer();
+            return true;
         }
     },
 

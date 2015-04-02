@@ -18,7 +18,7 @@ let routeElements = minodeModules.map((mod, i) => (
 let routes = (
 	<Route handler={Layout} path="/">
 		<DefaultRoute handler={LayoutContentDefault} />
-		<Route handler={LayoutContentServer} path="server/:serverName">
+		<Route name="server" handler={LayoutContentServer} path="server/:serverName">
 			{routeElements}
 		</Route>
 	</Route>

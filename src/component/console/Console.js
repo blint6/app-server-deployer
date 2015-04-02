@@ -36,13 +36,7 @@ style.input = {
 let Console = React.createClass({
 
     contextTypes: {
-        router: React.PropTypes.func
-    },
-
-    componentWillReceiveProps: function () {
-        return {
-            serverId: this.context.router.getParams().serverName
-        };
+        router: React.PropTypes.func.isRequired
     },
 
     getInitialState: function () {
@@ -52,12 +46,12 @@ let Console = React.createClass({
     },
 
     componentDidMount: function () {
-        ConsoleActions.subscribe(this.props.serverId);
+        ConsoleActions.subscribe(this.context.router.getCurrentParams().serverName);
         ConsoleStore.addChangeListener(this.onNewMessages);
     },
 
     componentWillUnmount: function () {
-        ConsoleActions.unsubscribe(this.props.serverId);
+        ConsoleActions.unsubscribe(this.context.router.getCurrentParams().serverName);
         ConsoleStore.removeChangeListener(this.onNewMessages);
     },
 
