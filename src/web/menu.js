@@ -10,21 +10,21 @@ module.exports = React.createClass({
         router: React.PropTypes.func
     },
 
-    render: function() {
+    render: function () {
         let serverName = this.context.router.getParams().serverName;
 
-		let menuElements = minodeModules.map((mod, i) => (
-        	<NavItemLink key={i} to={mod.uri} params={{ serverName: serverName }}>
-        		<span className={mod.menuClassName} />
-        		&nbsp;&nbsp;
-        		{mod.menuName}
-        	</NavItemLink>
-		));
+        let menuElements = minodeModules.map((mod, i) => (
+            <NavItemLink key={i} to={mod.uri} params={{ serverName: serverName }}>
+                <span className={mod.menuClassName}/>
+                &nbsp;&nbsp;
+                {mod.menuName}
+            </NavItemLink>
+        ));
 
         return (
-        	<Nav bsStyle="pills" stacked>
-	        	{menuElements}
-	    	</Nav>
-	    );
+            <Nav bsStyle="pills" stacked>
+                {menuElements}
+            </Nav>
+        );
     }
 });

@@ -33,3 +33,5 @@ node_modules
 /minode.sublime-project
 /minode.sublime-workspace
 /testBukkit
+
+.idea

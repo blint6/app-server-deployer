@@ -8,13 +8,13 @@ require('./serve');
 
 let demoServer = TestServer.load();
 
-let server = new TestServer()
+let server = new TestServer();
 
-dispatcher.registerClientConnections(function(payload) {
+dispatcher.registerClientConnections(function (payload) {
     dispatcher.handleServiceAction({
         actionType: mainConstants.SERVERS_INFO,
         servers: [{
-        	name: server.getName()
+            name: server.getName()
         }]
     }, payload.client);
 });

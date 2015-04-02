@@ -8,6 +8,7 @@ let Redirect = Router.Redirect;
 let Layout = require('./layout');
 let LayoutContentDefault = require('./layoutContentDefault');
 let LayoutContentServer = require('./layoutContentServer');
+
 let minodeModules = require('./modules');
 
 let routeElements = minodeModules.map((mod, i) => (

@@ -5,19 +5,19 @@ let ConsoleConstants = require('./ConsoleConstants');
 
 let CHANGE_EVENT = 'change';
 
-let _chat;
+let chat;
 
 function addMessages(messages) {
     messages.forEach(message => {
 
-        if (!_chat)
-            _chat = {
+        if (!chat)
+            chat = {
                 initialId: message.id,
                 messages: [message]
             };
 
-        else if (message.id >= _chat.initialId + _chat.messages.length)
-            _chat.messages.push(message);
+        else if (message.id >= chat.initialId + chat.messages.length)
+            chat.messages.push(message);
     });
 }
 
@@ -27,29 +27,29 @@ let ChatStore = assign({}, EventEmitter.prototype, {
      * Get the entire collection of messages.
      * @return {object}
      */
-    getMessages: function() {
-        return _chat ? _chat.messages : [];
+    getMessages: function () {
+        return chat ? chat.messages : [];
     },
 
-    emitChange: function() {
+    emitChange: function () {
         this.emit(CHANGE_EVENT);
     },
 
     /**
      * @param {function} callback
      */
-    addChangeListener: function(callback) {
+    addChangeListener: function (callback) {
         this.on(CHANGE_EVENT, callback);
     },
 
     /**
      * @param {function} callback
      */
-    removeChangeListener: function(callback) {
+    removeChangeListener: function (callback) {
         this.removeListener(CHANGE_EVENT, callback);
     },
 
-    dispatcherIndex: dispatcher.register(function(payload) {
+    dispatcherIndex: dispatcher.register(function (payload) {
         let action = payload.action;
 
         switch (action.actionType) {

@@ -15,8 +15,6 @@
     "gulp": "~3.8.10",
     "gulp-babel": "^4.0.0",
     "gulp-changed": "~1.1.1",
-    "gulp-insert": "~0.4.0",
-    "gulp-jshint": "~1.9.2",
     "gulp-livereload": "~3.7.0",
     "gulp-mocha": "~2.0.0",
     "gulp-nodemon": "~1.0.5",
@@ -26,7 +24,10 @@
     "gulp-watch": "~4.1.0",
     "vinyl-buffer": "~1.0.0",
     "vinyl-source-stream": "~1.0.0",
-    "watchify": "^2.4.0"
+    "watchify": "^2.4.0",
+    "eslint": "~0.18.0",
+    "babel-eslint": "~2.0.2",
+    "gulp-eslint": "~0.8.0"
   },
   "dependencies": {
     "browserify": "~8.1.3",

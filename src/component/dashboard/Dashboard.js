@@ -4,9 +4,9 @@ let style = {};
 
 let Dashboard = React.createClass({
 
-    render: function() {
+    render: function () {
         return (
-        	<h1>Deh Dashboard</h1>
+            <h1>Deh Dashboard</h1>
         );
     },
 

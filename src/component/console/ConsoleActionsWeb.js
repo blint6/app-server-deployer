@@ -6,14 +6,14 @@ let ConsoleActions = {
     /**
      * @param  {string} text
      */
-    create: function(text) {
+    create: function (text) {
         dispatcher.handleViewAction({
             actionType: ConsoleConstants.NEW_MESSAGES,
             text: text
         });
     },
 
-    sendMessage: function(serverId, message) {
+    sendMessage: function (serverId, message) {
         dispatcher.handleViewAction({
             actionType: ConsoleConstants.SEND_MESSAGE,
             serverId: serverId,
@@ -21,14 +21,14 @@ let ConsoleActions = {
         }, true);
     },
 
-    subscribe: function(serverId) {
-    	dispatcher.handleViewAction({
+    subscribe: function (serverId) {
+        dispatcher.handleViewAction({
             actionType: 'sub',
             sub: ConsoleConstants.SUB + serverId
         }, true);
     },
 
-    unsubscribe: function(serverId) {
+    unsubscribe: function (serverId) {
         dispatcher.handleViewAction({
             actionType: 'unsub',
             sub: ConsoleConstants.SUB + serverId

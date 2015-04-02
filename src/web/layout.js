@@ -8,14 +8,14 @@ let Banner = require('./banner/banner');
 let Menu = require('./menu');
 
 module.exports = React.createClass({
-    render: function() {
+    render: function () {
         return (
-        	<Grid fluid>
-				<Row id="headerRow">
-					<Col md={12}><Banner/></Col>
-				</Row>
-				<RouteHandler />
-			</Grid>
-		);
+            <Grid fluid>
+                <Row id="headerRow">
+                    <Col md={12}><Banner/></Col>
+                </Row>
+                <RouteHandler />
+            </Grid>
+        );
     }
 });

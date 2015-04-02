@@ -8,7 +8,7 @@ class BukkitServer extends AppServer {
 
     constructor(appServerDef, bukkitDef) {
         super(appServerDef);
-        this._bukkitDef = bukkitDef;
+        this.bukkitDef = bukkitDef;
     }
 
     getLogFile() {
@@ -17,10 +17,10 @@ class BukkitServer extends AppServer {
 
     spawnServer() {
         let args = [];
-        args.push(`-Xmx${this._appServerDef.memory}M`);
-        args.push(`-Xrunjdwp:transport=dt_socket,address=${this._appServerDef.port},server=y,suspend=n`);
+        args.push(`-Xmx${this.appServerDef.memory}M`);
+        args.push(`-Xrunjdwp:transport=dt_socket,address=${this.appServerDef.port},server=y,suspend=n`); // eslint-disable-line
         args.push('-jar');
-        args.push(this._bukkitDef.jar);
+        args.push(this.bukkitDef.jar);
 
         console.info('Executing server with command: java', args.join(' '));
         return spawn('java', args, {
@@ -38,11 +38,11 @@ BukkitServer.install = function install(appServerDef, options) {
     });
 
     return new Promise((resolve, reject) => {
-            bukkitDef.save(err => {
-                if (err) reject(Error(`Could not save new bukkit server ${appServerDef.name} to DB`, err));
-                else resolve();
-            });
-        })
+        bukkitDef.save(err => {
+            if (err) reject(Error(`Could not save new bukkit server ${appServerDef.name} to DB`, err));
+            else resolve();
+        });
+    })
         .then(() => new BukkitServer(appServerDef, bukkitDef));
 };
 

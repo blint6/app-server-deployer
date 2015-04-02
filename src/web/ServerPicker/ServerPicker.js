@@ -4,39 +4,39 @@ let mainStore = require('../mainStore');
 
 let ServerPicker = React.createClass({
 
-    getInitialState: function() {
+    getInitialState: function () {
         return {
             servers: []
         };
     },
 
-    componentDidMount: function() {
-        mainStore.addServersInfoListener(this._onServersInfo);
+    componentDidMount: function () {
+        mainStore.addServersInfoListener(this.onServersInfo);
     },
 
-    componentWillUnmount: function() {
-        mainStore.removeServersInfoListener(this._onServersInfo);
+    componentWillUnmount: function () {
+        mainStore.removeServersInfoListener(this.onServersInfo);
     },
 
-    render: function() {
+    render: function () {
         let servers = this.state.servers.map(server => {
             return (<option key={server.name} value={server.name}>{server.name}</option>);
         });
 
         return (
-            <select placeholder='Pick server' onChange={this._onChange}>
+            <select placeholder='Pick server' onChange={this.onChange}>
                 {servers}
             </select>
         );
     },
 
-    _onServersInfo: function() {
+    onServersInfo: function () {
         this.setState({
             servers: mainStore.servers
         });
     },
 
-    _onChange: function(e) {
+    onChange: function (e) {
         let serverName = e.target.value;
 
         if (serverName)

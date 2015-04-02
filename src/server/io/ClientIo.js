@@ -1,18 +1,18 @@
 let socketio = require('socket.io');
 let dispatcher = require('../dispatcher');
 
-module.exports = function(server) {
+module.exports = function (server) {
 
     let io = socketio.listen(server);
 
-    io.on('connection', function(client) {
+    io.on('connection', function (client) {
         console.info('Got a handshake');
         dispatcher.handleClientConnection(client);
 
-    	client.on('message', dispatcher.handleClientAction.bind(dispatcher, client));
+        client.on('message', dispatcher.handleClientAction.bind(dispatcher, client));
     });
 
-    dispatcher.registerServiceActions(function(p) {
+    dispatcher.registerServiceActions(function (p) {
 
         if (p.client) {
             let clients = p.client;

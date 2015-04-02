@@ -1,0 +1,19 @@
+{
+  "parser": "babel-eslint",
+  "env": {
+    "node": true,
+    "jasmine": true,
+    "browser": true
+  },
+  "ecmaFeatures": {
+    "jsx": true
+  },
+  "rules": {
+    "strict": false,
+    "semi": 2,
+    "curly": false,
+    "quotes": [1, "single", "avoid-escape"],
+    "comma-dangle": true,
+    "no-unused-vars": false // Because of JSX. IDE does the job
+  }
+}

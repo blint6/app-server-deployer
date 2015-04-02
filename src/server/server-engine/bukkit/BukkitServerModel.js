@@ -10,7 +10,7 @@ let BukkitServerSchema = new Schema({
 BukkitServerSchema.statics.findServer = function(appServerDef) {
     return new Promise((resolve, reject) =>
         this.model('BukkitServer').findOne({
-            appServer: appServerDef._id
+            appServer: appServerDef._id // eslint-disable-line no-underscore-dangle
         }, function(err, bukkitServer) {
             if (err) reject(err);
             else resolve(bukkitServer);
