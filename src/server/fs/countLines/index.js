@@ -3,7 +3,7 @@ let Promise = require('es6-promise').Promise;
 
 function countLines(file) {
     return new Promise((resolve, reject) => {
-        let count = 0;
+        let count = 1;
 
         fs.createReadStream(file)
 
