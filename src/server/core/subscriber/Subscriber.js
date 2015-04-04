@@ -17,37 +17,55 @@ let Subscriber = {
     subscribe: function (room, client) {
         let svc = services[room];
 
-        if (svc) {
-            svc.clients.push(client);
-            let chain = Promise.resolve();
+        if (!svc)
+            throw Error(`No room named ${room}`);
 
-            if (svc.clients.length === 1 && svc.onFirstSubscriber)
-                chain.then(() => svc.onFirstSubscriber());
-            if (svc.onSubscribe)
-                chain.then(() => svc.onSubscribe(client));
-        }
+        svc.clients.push(client);
+        let chain = Promise.resolve();
+
+        if (svc.clients.length === 1 && svc.onFirstSubscriber)
+            chain.then(() => svc.onFirstSubscriber());
+        if (svc.onSubscribe)
+            chain.then(() => svc.onSubscribe(client));
+
+        return chain;
     },
 
     unsubscribe: function (room, client) {
         let svc = services[room];
 
-        if (svc) {
-            let i = svc.clients.indexOf(client);
+        if (!svc)
+            throw Error(`No room named ${room}`);
 
-            if (i > -1)
-                svc.clients.splice(i, 1);
+        let i = svc.clients.indexOf(client);
+
+        if (i > -1) {
+            svc.clients.splice(i, 1);
+
+            if (!svc.clients.length)
+                svc.onAllUnsubscribed();
         }
     },
 
     publish: function (room, data) {
         let svc = services[room];
 
-        if (svc)
+        if (!svc)
+            throw Error(`No room named ${room}`);
+
+        if (svc.publish)
             return svc.publish(svc.clients, data);
+        else
+            console.warn(`No publish handler was setup for ${room}`);
     },
 
     getClients: function (room) {
-        return services[room] && services[room].clients;
+        let svc = services[room];
+
+        if (!svc)
+            throw Error(`No room named ${room}`);
+
+        return svc.clients;
     }
 };
 
