@@ -2,7 +2,7 @@ let fs = require('fs');
 let path = require('path');
 let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
-let tailFile = require('../fs/tailFile/tailFile');
+let tailFile = require('../fs/tailFile');
 let AppServerModel = require('./AppServerModel');
 let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
