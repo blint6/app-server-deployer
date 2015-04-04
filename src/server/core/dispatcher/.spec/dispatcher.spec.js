@@ -1,7 +1,7 @@
 require('should');
 let sinon = require('sinon');
 
-let dispatcher = require('../dispatcher');
+let dispatcher = require('..');
 let registeredIds = [];
 
 let serviceActionsCb = sinon.spy();

@@ -1,4 +1,4 @@
-let Dispatcher = require('../common/dispatcher/Dispatcher');
+let Dispatcher = require('../../../common/dispatcher/Dispatcher');
 let assign = require('object-assign');
 
 let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {

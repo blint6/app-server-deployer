@@ -1,6 +1,6 @@
 let Tail = require('tail').Tail;
-let dispatcher = require('../../server/dispatcher');
-let subscriber = require('../../server/subscriber');
+let dispatcher = require('../../server/core/dispatcher');
+let subscriber = require('../../server/core/subscriber');
 let countLines = require('../../server/fs/countLines');
 let ConsoleConstants = require('./ConsoleConstants');
 

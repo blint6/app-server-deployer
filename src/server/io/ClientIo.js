@@ -1,5 +1,5 @@
 let socketio = require('socket.io');
-let dispatcher = require('../dispatcher');
+let dispatcher = require('../core/dispatcher');
 
 module.exports = function (server) {
 

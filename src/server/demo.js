@@ -1,4 +1,4 @@
-let dispatcher = require('./dispatcher');
+let dispatcher = require('./core/dispatcher');
 let mainConstants = require('../common/mainConstants');
 let TestServer = require('./server-engine/test/TestServer');
 

@@ -1,11 +1,10 @@
 let Promise = require('es6-promise').Promise;
-let dispatcher = require('./dispatcher');
 
 let services = {};
 
 let Subscriber = {
 
-    register: function(room, options) {
+    register: function (room, options) {
         services[room] = {
             clients: [],
             publish: (typeof options.publish === 'function') && options.publish,
@@ -15,7 +14,7 @@ let Subscriber = {
         };
     },
 
-    subscribe: function(room, client) {
+    subscribe: function (room, client) {
         let svc = services[room];
 
         if (svc) {
@@ -29,7 +28,7 @@ let Subscriber = {
         }
     },
 
-    unsubscribe: function(room, client) {
+    unsubscribe: function (room, client) {
         let svc = services[room];
 
         if (svc) {
@@ -40,29 +39,16 @@ let Subscriber = {
         }
     },
 
-    publish: function(room, data) {
+    publish: function (room, data) {
         let svc = services[room];
 
         if (svc)
             return svc.publish(svc.clients, data);
     },
 
-    getClients: function(room) {
+    getClients: function (room) {
         return services[room] && services[room].clients;
     }
 };
-
-dispatcher.registerClientActions(function(payload) {
-    let action = payload.action;
-
-    switch (action.actionType) {
-        case 'sub':
-            Subscriber.subscribe(action.sub, payload.client);
-            break;
-        case 'unsub':
-            Subscriber.unsubscribe(action.sub, payload.client);
-            break;
-    }
-});
 
 module.exports = Subscriber;
