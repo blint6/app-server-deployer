@@ -31,16 +31,13 @@ var paths = {
 
 function bundle(bundler) {
     return bundler.bundle()
-        // log errors if they happen
         .on('error', gutil.log.bind(gutil, 'Browserify Error'))
         .pipe(source('minode.js'))
-        // optional, remove if you dont want sourcemaps
         .pipe(buffer())
         .pipe(sourcemaps.init({
             loadMaps: true
-        })) // loads map from browserify file
-        .pipe(sourcemaps.write('./')) // writes .map file
-        //
+        }))
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest(paths.build + '/web'));
 }
 
@@ -51,16 +48,19 @@ gulp.task('clean', function (cb) {
 });
 
 gulp.task('transpile', function () {
-    function transpile(strm) {
-    }
+    var sourceRoot = path.resolve('src').replace(/\\/g, '/');
+
+    if (sourceRoot[0] !== '/')
+        sourceRoot = '/' + sourceRoot;
 
     return gulp.src(paths.js, {
-        base: 'src'
+        base: 'src',
+        dot: true
     })
-        .pipe(changed(paths.build))
         .pipe(sourcemaps.init())
+        .pipe(changed(paths.build))
         .pipe(babel())
-        .pipe(sourcemaps.write())
+        .pipe(sourcemaps.write('.', {sourceRoot: sourceRoot}))
         .pipe(gulp.dest(paths.build))
         .pipe(livereload());
 });
@@ -73,7 +73,8 @@ gulp.task('lint', function () {
 
 gulp.task('copy', function () {
     return gulp.src(paths.asset, {
-        base: 'src'
+        base: 'src',
+        dot: true
     })
         .pipe(changed(paths.build))
         .pipe(gulp.dest(paths.build))
@@ -100,10 +101,11 @@ gulp.task('bundle', function () {
     bundle(bundler);
 });
 
-gulp.task('test', ['transpile'], function () {
+gulp.task('test', ['transpile', 'copy'], function () {
     return gulp
         .src('build/**/*.spec.js', {
-            read: false
+            read: false,
+            dot: true
         })
         .pipe(mocha());
 });
