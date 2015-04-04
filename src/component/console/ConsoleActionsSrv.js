@@ -2,7 +2,6 @@ let Tail = require('tail').Tail;
 let dispatcher = require('../../server/dispatcher');
 let subscriber = require('../../server/subscriber');
 let countLines = require('../../server/fs/countLines');
-let tailFile = require('../../server/fs/tailFile');
 let ConsoleConstants = require('./ConsoleConstants');
 
 
@@ -15,8 +14,7 @@ let ConsoleActions = {
         subscriber.register(room, {
 
             onSubscribe: function (client) {
-                tailFile(server.getLog(), 100)
-
+                server.getLogs(100)
                     .then(lines =>
                         dispatcher.handleServiceAction({
                             actionType: ConsoleConstants.NEW_MESSAGES,
@@ -26,7 +24,7 @@ let ConsoleActions = {
 
             onFirstSubscriber: function () {
 
-                let promise = countLines(server.getLog())
+                let promise = countLines(server.getServerLog())
 
                     .then(function (count) {
                         lineCount = count;
@@ -34,7 +32,7 @@ let ConsoleActions = {
                         if (tail)
                             tail.watch();
                         else
-                            tail = new Tail(server.getLog());
+                            tail = new Tail(server.getServerLog());
 
                         tail.on('line', function (data) {
                             lineCount += 1;

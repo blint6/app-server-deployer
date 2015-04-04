@@ -2,6 +2,7 @@ let fs = require('fs');
 let path = require('path');
 let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
+let tailFile = require('../fs/tailFile/tailFile');
 let AppServerModel = require('./AppServerModel');
 let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
@@ -28,7 +29,7 @@ class AppServer extends EventEmitter {
                 console.log('Preparing log files');
                 return Promise.all([
                     'pipe',
-                    new Promise((resolve, reject) => fs.open(this.getLog(), 'a', '0772', (err, stream) => {
+                    new Promise((resolve, reject) => fs.open(this.getServerLog(), 'a', '0772', (err, stream) => {
                         if (err) reject(err);
                         else resolve(stream);
                     })),
@@ -98,12 +99,21 @@ class AppServer extends EventEmitter {
         return path.resolve(this.path, 'log');
     }
 
-    getLog() {
+    getServerLog() {
         return path.resolve(this.path, 'log/server.log');
     }
 
     getErrorLog() {
         return path.resolve(this.path, 'log/error.log');
+    }
+
+    getLogs(fromId, nLines) {
+        if (arguments.length < 3) {
+            nLines = fromId;
+            fromId = 0;
+        }
+
+        return tailFile(this.getServerLog(), fromId, nLines);
     }
 
     createServerFolders() {

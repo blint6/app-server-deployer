@@ -6,17 +6,18 @@ console.info('Minode demo start');
 
 require('./serve');
 
-let demoServer = TestServer.load();
-
-let server = new TestServer();
+let servers = [
+    TestServer.load('foo-server'),
+    TestServer.load('bar-server')
+];
 
 dispatcher.registerClientConnections(function (payload) {
     dispatcher.handleServiceAction({
         actionType: mainConstants.SERVERS_INFO,
-        servers: [{
+        servers: servers.map(server => ({
             name: server.getName()
-        }]
+        }))
     }, payload.client);
 });
 
-demoServer.run();
+servers.forEach(server => server.run());

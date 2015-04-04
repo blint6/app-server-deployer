@@ -4,9 +4,9 @@ let AppServer = require('../AppServer');
 
 class TestServer extends AppServer {
 
-    constructor() {
+    constructor(name) {
         super({
-            name: 'test-instance',
+            name: name,
             engine: 'test',
             port: 0,
             memory: 1024
@@ -28,8 +28,8 @@ class TestServer extends AppServer {
     }
 }
 
-TestServer.load = function load() {
-    return new TestServer();
+TestServer.load = function load(name) {
+    return new TestServer(name);
 };
 
 module.exports = TestServer;
