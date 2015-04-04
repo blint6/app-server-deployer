@@ -1,7 +1,7 @@
 require('should');
 
 let path = require('path');
-let tailFile = require('./');
+let tailFile = require('..');
 let dummyLogPath = path.join(__dirname, 'dummy.log');
 let dummyLogLength = 6;
 
