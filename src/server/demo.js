@@ -1,8 +1,9 @@
+let log = require('./core/logger');
 let dispatcher = require('./core/dispatcher');
 let mainConstants = require('../common/mainConstants');
 let TestServer = require('./server-engine/test/TestServer');
 
-console.info('Minode demo start');
+log.info('Minode demo start');
 
 require('./serve');
 

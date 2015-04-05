@@ -1,3 +1,4 @@
+let log = require('../logger');
 let Promise = require('es6-promise').Promise;
 
 let services = {};
@@ -56,7 +57,7 @@ let Subscriber = {
         if (svc.publish)
             return svc.publish(svc.clients, data);
         else
-            console.warn(`No publish handler was setup for ${room}`);
+            log.warn('No publish handler was setup for %s', room);
     },
 
     getClients: function (room) {

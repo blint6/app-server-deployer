@@ -1,6 +1,7 @@
 let fs = require('fs');
 let spawn = require('child_process').spawn;
 let Promise = require('es6-promise').Promise;
+let log = require('../core/logger');
 
 function check(path) {
     return new Promise((resolve, reject) => {
@@ -34,11 +35,11 @@ function installJar(engine, path, jar) {
             });
 
             extract.stdout.on('data', data => {
-                console.debug(jar, 'extract:', data);
+                log.debug(jar, 'extract:', data);
             });
 
-            extract.stderr.on('data', data => {
-                console.error('Error while extracting', jar, ':', data);
+            extract.stderr.on('data', err => {
+                log.error('Error while extracting %s', jar, err);
             });
 
             extract.on('close', code => {

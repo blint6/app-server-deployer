@@ -1,4 +1,5 @@
 let socketio = require('socket.io');
+let log = require('../core/logger');
 let dispatcher = require('../core/dispatcher');
 
 module.exports = function (server) {
@@ -6,7 +7,7 @@ module.exports = function (server) {
     let io = socketio.listen(server);
 
     io.on('connection', function (client) {
-        console.info('Got a handshake');
+        log.info('Got a handshake');
         dispatcher.handleClientConnection(client);
 
         client.on('message', dispatcher.handleClientAction.bind(dispatcher, client));

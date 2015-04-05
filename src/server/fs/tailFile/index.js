@@ -1,5 +1,6 @@
 let fs = require('fs');
 let Promise = require('es6-promise').Promise;
+let log = require('../../core/logger');
 
 function tailFile(file, fromId, nLines) {
 
@@ -67,7 +68,7 @@ function tailFile(file, fromId, nLines) {
             })
 
             .on('error', function (err) {
-                console.error('Could not tail', nLines, 'lines for', file, err);
+                log.error('Could not tail %d lines for %s', nLines, file, err);
                 reject(err);
             });
     });

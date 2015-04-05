@@ -1,6 +1,7 @@
 let path = require('path');
 let spawn = require('child_process').spawn;
 let Promise = require('es6-promise').Promise;
+let log = require('../../core/logger');
 let AppServer = require('../AppServer');
 let BukkitServerModel = require('./BukkitServerModel');
 
@@ -22,7 +23,7 @@ class BukkitServer extends AppServer {
         args.push('-jar');
         args.push(this.bukkitDef.jar);
 
-        console.info('Executing server with command: java', args.join(' '));
+        log.info('Executing server with command: java %s', args.join(' '));
         return spawn('java', args, {
             cwd: this.getExecutionDir(),
             stdio: this.stdio
@@ -31,7 +32,8 @@ class BukkitServer extends AppServer {
 }
 
 BukkitServer.install = function install(appServerDef, options) {
-    console.log('Installing new bukkit server', appServerDef.name);
+    log.info('Installing new bukkit server %s', appServerDef.name);
+
     let bukkitDef = new BukkitServerModel({
         appServer: appServerDef,
         jar: 'D:\\Apps\\SpigotBuild\\spigot-1.8.jar',

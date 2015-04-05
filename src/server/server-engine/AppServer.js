@@ -2,6 +2,7 @@ let fs = require('fs');
 let path = require('path');
 let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
+let log = require('../core/logger');
 let tailFile = require('../fs/tailFile');
 let AppServerModel = require('./AppServerModel');
 let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
@@ -23,27 +24,10 @@ class AppServer extends EventEmitter {
             throw Error('Cannot start server, already running');
         }
 
-        this.createServerFolders()
+        Promise.resolve(this.prepareIo())
 
             .then(() => {
-                console.log('Preparing log files');
-                return Promise.all([
-                    'pipe',
-                    new Promise((resolve, reject) => fs.open(this.getServerLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    })),
-                    new Promise((resolve, reject) => fs.open(this.getErrorLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    }))
-                ]).then(stdio => {
-                    this.stdio = stdio;
-                });
-            })
-
-            .then(() => {
-                console.info('Spawning server process');
+                log.info('Spawning server process');
                 this.process = this.spawnServer();
 
                 // Process terminated
@@ -59,9 +43,9 @@ class AppServer extends EventEmitter {
             })
 
             .then(() => {
-                console.info('Server process started');
+                log.info('Server process started');
             }, err => {
-                console.error('Failed to start the server', err);
+                log.error('Failed to start the server', err);
             });
     }
 
@@ -72,7 +56,7 @@ class AppServer extends EventEmitter {
 
     stop() {
         if (this.process) {
-            console.info('Terminating server');
+            log.info('Terminating server');
             this.process.kill();
         }
     }
@@ -80,11 +64,11 @@ class AppServer extends EventEmitter {
     handleClose(code, signal) {
         if (code === 0) {
             if (signal)
-                console.info('Server closed - got signal', signal);
+                log.info('Server closed - got signal %d', signal);
             else
-                console.info('Server closed successfully');
+                log.info('Server closed successfully');
         } else
-            console.error('Server exited with code', code);
+            log.error('Server exited with code %d', code);
     }
 
     getName() {
@@ -116,15 +100,17 @@ class AppServer extends EventEmitter {
         return tailFile(this.getServerLog(), fromId, nLines);
     }
 
-    createServerFolders() {
-        return new Promise((resolve, reject) => {
-            console.log('Preparing server directories');
+    prepareIo() {
+        return new Promise(
+            (resolve, reject) => {
+                log.info('Preparing server directories');
 
-            fs.mkdir(this.path, err => {
-                if (err && err.code !== 'EEXIST') reject(err);
-                else resolve();
-            });
-        })
+                fs.mkdir(this.path, err => {
+                    if (err && err.code !== 'EEXIST') reject(err);
+                    else resolve();
+                });
+            })
+
             .then(() => {
                 let logDirPromise = new Promise((resolve, reject) => {
                     fs.mkdir(this.getLogDir(), err => {
@@ -141,6 +127,24 @@ class AppServer extends EventEmitter {
                 });
 
                 return Promise.all([logDirPromise, instanceDirPromise]);
+            })
+
+            .then(() => {
+                log.info('Preparing log files');
+
+                return Promise.all([
+                    'pipe',
+                    new Promise((resolve, reject) => fs.open(this.getServerLog(), 'a', '0772', (err, stream) => {
+                        if (err) reject(err);
+                        else resolve(stream);
+                    })),
+                    new Promise((resolve, reject) => fs.open(this.getErrorLog(), 'a', '0772', (err, stream) => {
+                        if (err) reject(err);
+                        else resolve(stream);
+                    }))
+                ]).then(stdio => {
+                    this.stdio = stdio;
+                });
             });
     }
 }
@@ -152,7 +156,7 @@ AppServer.loadAll = function () {
 };
 
 AppServer.install = function (engineName, name, options) {
-    console.info('Installng engine', engineName, 'for', name);
+    log.info('Installng engine %s for %s', engineName, name);
 
     let engine = AppServer.getEngine(engineName),
         appServerDef = new AppServerModel({
@@ -162,15 +166,17 @@ AppServer.install = function (engineName, name, options) {
             memory: 1024
         });
 
-    return new Promise((resolve, reject) => {
-        appServerDef.save(err => {
-            if (err) reject(Error(`Could not save new server ${name} to DB`, err));
-            else resolve();
-        });
-    })
+    return new Promise(
+        (resolve, reject) => {
+            appServerDef.save(err => {
+                if (err) reject(Error(`Could not save new server ${name} to DB`, err));
+                else resolve();
+            });
+        })
+
         .then(() => {
             function rollback(err) {
-                console.error('Error while installng engine', engineName, 'for', name, '- Rollback', err.stack);
+                log.error('Error while installng engine %s for %s - Rollback', engineName, name, err);
                 AppServerModel.remove({
                     _id: appServerDef._id // eslint-disable-line no-underscore-dangle
                 });
