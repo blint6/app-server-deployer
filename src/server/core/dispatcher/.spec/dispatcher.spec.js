@@ -29,29 +29,26 @@ describe('MinodeServerDispatcher', function () {
                 }
             };
 
-            dispatcher.handleServiceAction();
             dispatcher.handleServiceAction(action);
             dispatcher.handleServiceAction(action, 'random client');
 
-            serviceActionsCb.callCount.should.be.exactly(3);
+            serviceActionsCb.callCount.should.equal(2);
 
             sinon.assert.calledWith(serviceActionsCb.firstCall, {
                 source: 'SERVICE_ACTION',
                 client: undefined,
-                action: undefined
+                action: action
             });
 
             sinon.assert.calledWith(serviceActionsCb.secondCall, {
                 source: 'SERVICE_ACTION',
-                client: undefined,
-                action: action
-            });
-
-            sinon.assert.calledWith(serviceActionsCb.thirdCall, {
-                source: 'SERVICE_ACTION',
                 client: 'random client',
                 action: action
             });
+        });
+
+        it('should break with no action provided', function () {
+            dispatcher.handleServiceAction.bind(dispatcher).should.throwError();
         });
     });
 
@@ -74,22 +71,26 @@ describe('MinodeServerDispatcher', function () {
                 }
             };
 
-            dispatcher.handleClientAction('some client');
             dispatcher.handleClientAction('some client', action);
+            dispatcher.handleClientAction('some other client', action);
 
-            clientActionsCb.callCount.should.be.exactly(2);
+            clientActionsCb.callCount.should.equal(2);
 
             sinon.assert.calledWith(clientActionsCb.firstCall, {
                 source: 'CLIENT_ACTION',
                 client: 'some client',
-                action: undefined
+                action: action
             });
 
             sinon.assert.calledWith(clientActionsCb.secondCall, {
                 source: 'CLIENT_ACTION',
-                client: 'some client',
+                client: 'some other client',
                 action: action
             });
+        });
+
+        it('should break with no action provided', function () {
+            dispatcher.handleClientAction.bind(dispatcher, 'some client').should.throwError();
         });
     });
 
@@ -107,7 +108,7 @@ describe('MinodeServerDispatcher', function () {
         it('should dispatch client connections properly', function () {
             dispatcher.handleClientConnection('new client');
 
-            clientConnectionsCb.callCount.should.be.exactly(1);
+            clientConnectionsCb.callCount.should.equal(1);
 
             sinon.assert.calledWith(clientConnectionsCb, {
                 source: 'CLIENT_CONNECTION',

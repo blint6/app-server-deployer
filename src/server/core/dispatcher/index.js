@@ -7,9 +7,11 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
      * A bridge function between the services and the dispatcher, marking the action
      * as a view action.  Another variant here could be handleServerAction.
      * @param  {object} action The data coming from the view.
-     * @param  {boolean} sendToClient If the payload should be sent to the client.
+     * @param  {boolean} client The client to send the payload to, if necessary.
      */
-    handleServiceAction: function(action, client) {
+    handleServiceAction: function (action, client) {
+        if (!action) throw Error('No action provided');
+
         this.dispatch({
             source: 'SERVICE_ACTION',
             client: client,
@@ -17,8 +19,8 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
         });
     },
 
-    registerServiceActions: function(cb) {
-        return this.register(function(payload) {
+    registerServiceActions: function (cb) {
+        return this.register(function (payload) {
             if (payload.source === 'SERVICE_ACTION') {
                 return cb(payload, payload.action);
             }
@@ -29,9 +31,12 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
 
     /**
      * A bridge function between the client and the dispatcher.
+     * @param  {boolean} client The client that sent the payload.
      * @param  {object} action The data coming from the view.
      */
-    handleClientAction: function(client, action) {
+    handleClientAction: function (client, action) {
+        if (!action) throw Error('No action provided');
+
         this.dispatch({
             source: 'CLIENT_ACTION',
             client: client,
@@ -39,8 +44,8 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
         });
     },
 
-    registerClientActions: function(cb) {
-        return this.register(function(payload) {
+    registerClientActions: function (cb) {
+        return this.register(function (payload) {
             if (payload.source === 'CLIENT_ACTION') {
                 return cb(payload, payload.action);
             }
@@ -51,17 +56,17 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
 
     /**
      * Handler for client connections.
-     * @param  {object} action The data coming from the view.
+     * @param  {boolean} client The client that connected.
      */
-    handleClientConnection: function(client) {
+    handleClientConnection: function (client) {
         this.dispatch({
             source: 'CLIENT_CONNECTION',
             client: client
         });
     },
 
-    registerClientConnections: function(cb) {
-        return this.register(function(payload) {
+    registerClientConnections: function (cb) {
+        return this.register(function (payload) {
             if (payload.source === 'CLIENT_CONNECTION') {
                 return cb(payload);
             }
