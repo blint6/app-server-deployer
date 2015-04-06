@@ -11,11 +11,13 @@ module.exports = new Logger({
 
     transports: [
         new winston.transports.DailyRotateFile({
+            name: 'minode',
             filename: path.resolve(logDir, 'minode'),
             datePattern: '.yyyy-MM-dd.log',
             level: 'debug',
         }),
         new winston.transports.Console({
+            name: 'console',
             level: 'debug',
             prettyPrint: true,
         })

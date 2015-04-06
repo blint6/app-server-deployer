@@ -8,7 +8,7 @@ log.info('Minode demo start');
 require('./serve');
 
 let servers = [
-    //TestServer.load('foo-server', {sendInterval: 4000}),
+    TestServer.load('foo-server', {sendInterval: 4000}),
     TestServer.load('bar-server', {sendInterval: 5000})
 ];
 

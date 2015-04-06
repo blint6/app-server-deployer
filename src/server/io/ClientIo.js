@@ -7,7 +7,7 @@ module.exports = function (server) {
     let io = socketio.listen(server);
 
     io.on('connection', function (client) {
-        log.info('Got a handshake');
+        log.debug('Got a handshake');
         dispatcher.handleClientConnection(client);
 
         client.on('message', dispatcher.handleClientAction.bind(dispatcher, client));
