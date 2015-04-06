@@ -13,19 +13,11 @@ module.exports = new Logger({
         new winston.transports.DailyRotateFile({
             filename: path.resolve(logDir, 'minode'),
             datePattern: '.yyyy-MM-dd.log',
-            level: 'debug'
+            level: 'debug',
         }),
         new winston.transports.Console({
-            handleExceptions: true,
-            level: 'debug'
+            level: 'debug',
+            prettyPrint: true,
         })
     ],
-
-    exceptionHandlers: [
-        new winston.transports.DailyRotateFile({
-            filename: path.resolve(logDir, 'minode-errors'),
-            datePattern: '.yyyy-MM-dd.log',
-            level: 'debug'
-        })
-    ]
 });
