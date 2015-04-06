@@ -3,9 +3,9 @@
 let serverName, sendInterval;
 
 if (process.argv.length > 2)
-    serverName = process.argv[3];
+    serverName = process.argv[2];
 if (process.argv.length > 3)
-    sendInterval = parseInt(process.argv[4]);
+    sendInterval = parseInt(process.argv[3]);
 
 function print(str) {
     process.stdout.write(str);

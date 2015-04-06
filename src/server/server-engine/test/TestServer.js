@@ -24,7 +24,13 @@ class TestServer extends AppServer {
 
     getLogTransports() {
         return [
+            new winston.transports.Memory({
+                name: 'memory',
+                level: 'debug',
+                prettyPrint: true,
+            }),
             new winston.transports.Console({
+                name: 'console',
                 level: 'debug',
                 prettyPrint: true,
             })
@@ -32,7 +38,7 @@ class TestServer extends AppServer {
     }
 
     spawnServer() {
-        let args = [require.resolve('./TestServerProcess'), this.getName(), this.sendInterval];
+        let args = [require.resolve('./TestServerProcess'), this.getName(), this.appServerDef.sendInterval];
         log.info('Executing test server with command: node %s', args.join(' '));
         return spawn('node', args);
     }
