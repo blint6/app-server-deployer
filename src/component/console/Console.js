@@ -63,7 +63,7 @@ let Console = React.createClass({
     render: function () {
         let lines = this.state.lines.map(line => {
             return (
-                <li key={line.id} style={style.line}>{line.content}</li>
+                <li key={line.id} style={style.line}>{line.message}</li>
             );
         });
 

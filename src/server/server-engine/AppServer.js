@@ -1,9 +1,11 @@
 let fs = require('fs');
 let path = require('path');
-let EventEmitter = require('events').EventEmitter;
 let Promise = require('es6-promise').Promise;
+let winston = require('winston');
+let Logger = winston.Logger;
 let log = require('../core/logger');
 let tailFile = require('../fs/tailFile');
+let forEachLine = require('../fs/forEachLine');
 let AppServerModel = require('./AppServerModel');
 let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
@@ -12,11 +14,14 @@ let engines = {
 };
 
 
-class AppServer extends EventEmitter {
+class AppServer {
 
     constructor(serverDef) {
         this.appServerDef = serverDef;
         this.path = serverDef.name.replace(/[\/\\]/g, '_');
+        this.log = new Logger({
+            transports: this.getLogTransports()
+        });
     }
 
     run() {
@@ -29,13 +34,26 @@ class AppServer extends EventEmitter {
             .then(() => {
                 log.info('Spawning server process');
                 this.process = this.spawnServer();
+                this.process.stdout.on('data', forEachLine(this.handleStdout.bind(this)));
+                this.process.stderr.on('data', forEachLine(this.handleStderr.bind(this)));
 
                 // Process terminated
-                this.process.on('close', function (code, signal) {
-                    delete this.process;
+                this.processEnded = new Promise(function (resolve) {
+                    this.process.on('close', function (code, signal) {
+                        delete this.process;
 
-                    if (typeof this.handleClose === 'function')
-                        this.handleClose(code, signal);
+                        if (code === null) {
+                            log.info('Server closed - got signal %s', signal);
+                            resolve(signal);
+                        } else {
+                            if (code === 0)
+                                log.info('Server closed successfully');
+                            else
+                                log.error('Server exited with code %d', code);
+
+                            resolve(code);
+                        }
+                    }.bind(this));
                 }.bind(this));
 
                 // Log notifier
@@ -50,25 +68,15 @@ class AppServer extends EventEmitter {
     }
 
     sendMessage(message) {
-        //console.log(JSON.stringify(this.stdio[0]))
-        this.process.stdio[0].write(message + '\n');
+        this.process.stdin.write(message + '\n');
     }
 
     stop() {
         if (this.process) {
             log.info('Terminating server');
             this.process.kill();
+            return this.processEnded;
         }
-    }
-
-    handleClose(code, signal) {
-        if (code === 0) {
-            if (signal)
-                log.info('Server closed - got signal %d', signal);
-            else
-                log.info('Server closed successfully');
-        } else
-            log.error('Server exited with code %d', code);
     }
 
     getName() {
@@ -81,23 +89,6 @@ class AppServer extends EventEmitter {
 
     getLogDir() {
         return path.resolve(this.path, 'log');
-    }
-
-    getServerLog() {
-        return path.resolve(this.path, 'log/server.log');
-    }
-
-    getErrorLog() {
-        return path.resolve(this.path, 'log/error.log');
-    }
-
-    getLogs(fromId, nLines) {
-        if (arguments.length < 3) {
-            nLines = fromId;
-            fromId = 0;
-        }
-
-        return tailFile(this.getServerLog(), fromId, nLines);
     }
 
     prepareIo() {
@@ -127,25 +118,25 @@ class AppServer extends EventEmitter {
                 });
 
                 return Promise.all([logDirPromise, instanceDirPromise]);
-            })
-
-            .then(() => {
-                log.info('Preparing log files');
-
-                return Promise.all([
-                    'pipe',
-                    new Promise((resolve, reject) => fs.open(this.getServerLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    })),
-                    new Promise((resolve, reject) => fs.open(this.getErrorLog(), 'a', '0772', (err, stream) => {
-                        if (err) reject(err);
-                        else resolve(stream);
-                    }))
-                ]).then(stdio => {
-                    this.stdio = stdio;
-                });
             });
+    }
+
+    getLogTransports() {
+        return [
+            new winston.transports.DailyRotateFile({
+                filename: path.resolve(this.getLogDir(), 'server'),
+                datePattern: '.yyyy-MM-dd.log',
+                level: 'debug'
+            })
+        ];
+    }
+
+    handleStdout(line) {
+        this.log.info(line);
+    }
+
+    handleStderr(line) {
+        this.log.error(line);
     }
 }
 

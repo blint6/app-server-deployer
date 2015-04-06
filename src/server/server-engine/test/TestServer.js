@@ -1,35 +1,56 @@
 let path = require('path');
 let spawn = require('child_process').spawn;
+let winston = require('winston');
+let log = require('../../core/logger');
+let forEachLine = require('../../fs/forEachLine');
 let AppServer = require('../AppServer');
 
 class TestServer extends AppServer {
 
-    constructor(name) {
+    constructor(name, options) {
+        options = options || {};
         super({
             name: name,
             engine: 'test',
             port: 0,
-            memory: 1024
+            memory: 1024,
+            sendInterval: options.sendInterval || -1
         });
     }
 
-    getLogFile() {
-        return path.resolve(this.path, 'test-server.log');
+    prepareIo() {
+        log.debug('TestServer#prepareIo - Sit back, we are not writing any file');
+    }
+
+    getLogTransports() {
+        return [
+            new winston.transports.Console({
+                level: 'debug',
+                prettyPrint: true,
+            })
+        ];
     }
 
     spawnServer() {
-        let args = [require.resolve('./TestServerProcess')];
+        let args = [require.resolve('./TestServerProcess'), this.getName(), this.sendInterval];
+        log.info('Executing test server with command: node %s', args.join(' '));
+        return spawn('node', args);
+    }
 
-        console.info('Executing test server with command: node', args.join(' '));
-        return spawn('node', args, {
-            cwd: this.getExecutionDir(),
-            stdio: this.stdio
-        });
+    /* For test purpose only, Dispatcher should be used otherwise */
+    registerOnNewLine(cb) {
+        let listener = forEachLine(cb);
+        this.process.stdout.on('data', listener);
+        return listener;
+    }
+
+    unregisterOnNewLine(listener) {
+        this.process.stdout.removeListener('data', listener);
     }
 }
 
-TestServer.load = function load(name) {
-    return new TestServer(name);
+TestServer.load = function load(name, options) {
+    return new TestServer(name, options);
 };
 
 module.exports = TestServer;

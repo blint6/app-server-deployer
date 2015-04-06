@@ -1,4 +1,3 @@
-let Tail = require('tail').Tail;
 let dispatcher = require('../../server/core/dispatcher');
 let subscriber = require('../../server/core/subscriber');
 let countLines = require('../../server/fs/countLines');
@@ -9,41 +8,18 @@ let ConsoleActions = {
 
     registerServer: function (server) {
         let room = ConsoleConstants.SUB + server.path;
-        let tail, lineCount;
 
         subscriber.register(room, {
 
             onSubscribe: function (client) {
-                server.getLogs(100)
-                    .then(lines =>
-                        dispatcher.handleServiceAction({
-                            actionType: ConsoleConstants.NEW_MESSAGES,
-                            messages: lines
-                        }, client));
-            },
+                server.log.query({limit: 100, start: -100}, (err, lines) => {
+                    if (err) throw err;
 
-            onFirstSubscriber: function () {
-
-                let promise = countLines(server.getServerLog())
-
-                    .then(function (count) {
-                        lineCount = count;
-
-                        if (tail)
-                            tail.watch();
-                        else
-                            tail = new Tail(server.getServerLog());
-
-                        tail.on('line', function (data) {
-                            lineCount += 1;
-                            subscriber.publish(room, {
-                                id: lineCount,
-                                content: data
-                            });
-                        });
-                    });
-
-                return promise;
+                    dispatcher.handleServiceAction({
+                        actionType: ConsoleConstants.NEW_MESSAGES,
+                        messages: lines
+                    }, client);
+                });
             },
 
             publish: function (clients, message) {
@@ -52,11 +28,10 @@ let ConsoleActions = {
                     messages: [message]
                 }, clients);
             },
+        });
 
-            onAllUnsubscribed: function () {
-                if (tail)
-                    tail.unwatch();
-            },
+        server.log.stream({start: -1}).on('log', function (log) {
+            subscriber.publish(room, log);
         });
 
         dispatcher.registerClientActions(function (payload) {

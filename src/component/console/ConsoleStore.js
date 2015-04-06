@@ -8,16 +8,17 @@ let CHANGE_EVENT = 'change';
 let chat;
 
 function addMessages(messages) {
+    if (!chat)
+        chat = {
+            initialId: 0,
+            lastId: -1,
+            messages: []
+        };
+
     messages.forEach(message => {
-
-        if (!chat)
-            chat = {
-                initialId: message.id,
-                messages: [message]
-            };
-
-        else if (message.id >= chat.initialId + chat.messages.length)
-            chat.messages.push(message);
+        chat.lastId += 1;
+        message.id = chat.lastId;
+        chat.messages.push(message);
     });
 }
 
