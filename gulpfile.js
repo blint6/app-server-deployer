@@ -5,6 +5,7 @@ var Promise = require('es6-promise').Promise;
 var gulp = require('gulp');
 var del = require('del');
 var eslint = require('gulp-eslint');
+var istanbul = require('gulp-istanbul');
 var mocha = require('gulp-mocha');
 var changed = require('gulp-changed');
 var babel = require('gulp-babel');
@@ -101,13 +102,21 @@ gulp.task('bundle', function () {
     bundle(bundler);
 });
 
-gulp.task('test', ['transpile', 'copy'], function () {
-    return gulp
-        .src('build/**/*.spec.js', {
-            read: false,
-            dot: true
-        })
-        .pipe(mocha());
+gulp.task('test', ['transpile', 'copy'], function (cb) {
+    var specs = 'build/**/*.spec.js';
+    gulp.src(['build/**/*.js'])
+        .pipe(istanbul())
+        .pipe(istanbul.hookRequire())
+        .on('finish', function () {
+            gulp
+                .src(specs, {
+                    read: false,
+                    dot: true
+                })
+                .pipe(mocha())
+                .pipe(istanbul.writeReports())
+                .on('end', cb);
+        });
 });
 
 gulp.task('demo', ['bundle', 'copy', 'transpile'], function () {
