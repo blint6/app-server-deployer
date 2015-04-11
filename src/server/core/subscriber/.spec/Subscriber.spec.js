@@ -31,6 +31,7 @@ describe('Subscriber', function () {
             Subscriber.register('r1', room.r1);
             Subscriber.register('r2', room.r2);
             Subscriber.register('dummyRoom', room.dummyRoom);
+            Subscriber.register('dummyRoom2', room.dummyRoom);
             Subscriber.register('emptyRoom', room.dummyRoom);
         });
 
@@ -52,7 +53,8 @@ describe('Subscriber', function () {
                     Subscriber.subscribe('r2', 'c22'),
                     Subscriber.subscribe('dummyRoom', 'cd1'),
                     Subscriber.subscribe('dummyRoom', 'cd2'),
-                    Subscriber.subscribe('dummyRoom', 'cd3')
+                    Subscriber.subscribe('dummyRoom', 'cd3'),
+                    Subscriber.subscribe('dummyRoom2', 'cdremove')
                 ])
                 .then(() => {
                     sinon.assert.calledOnce(room.r1.onFirstSubscriber);
@@ -84,6 +86,7 @@ describe('Subscriber', function () {
             Subscriber.unsubscribe('r1', 'c1');
             Subscriber.unsubscribe('r2', 'c21');
             Subscriber.unsubscribe('dummyRoom', 'cd2');
+            Subscriber.unsubscribe('dummyRoom2', 'cdremove'); // Should not fail
 
             sinon.assert.calledOnce(room.r1.onAllUnsubscribed);
             sinon.assert.calledWith(room.r1.onAllUnsubscribed);

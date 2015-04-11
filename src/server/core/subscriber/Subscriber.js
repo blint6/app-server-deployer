@@ -43,7 +43,7 @@ let Subscriber = {
         if (i > -1) {
             svc.clients.splice(i, 1);
 
-            if (!svc.clients.length)
+            if (svc.onAllUnsubscribed && !svc.clients.length)
                 svc.onAllUnsubscribed();
         }
     },
