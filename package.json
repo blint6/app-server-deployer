@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./node_modules/gulp/bin/gulp.js clean && node ./node_modules/gulp/bin/gulp.js test"
   },
   "author": "Nicolas Gasull",
   "license": "ISC",
