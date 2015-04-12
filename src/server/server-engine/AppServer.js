@@ -41,18 +41,22 @@ class AppServer {
                 this.processEnded = new Promise(function (resolve) {
                     this.process.on('close', function (code, signal) {
                         delete this.process;
+                        let processEnded = {};
 
-                        if (code === null) {
+                        if (signal) {
                             log.info('Server closed - got signal %s', signal);
-                            resolve(signal);
-                        } else {
+                            processEnded.signal = signal;
+                        }
+                        if (code !== null) {
                             if (code === 0)
                                 log.info('Server closed successfully');
                             else
                                 log.error('Server exited with code %d', code);
 
-                            resolve(code);
+                            processEnded.code = code;
                         }
+
+                        resolve(processEnded);
                     }.bind(this));
                 }.bind(this));
 

@@ -55,8 +55,14 @@ describe('AppServer', function () {
 
         it('should stop the server properly', function () {
             return fooServer.stop()
-                .then(code => code.should.equal('SIGTERM'),
-                    err => {
+                .then(returned => {
+                    if (returned.hasOwnProperty('code'))
+                        returned.code.should.equal(143);
+                    else if (returned.hasOwnProperty('signal'))
+                        returned.signal.should.equal('SIGTERM');
+                    else
+                        throw Error('Did not return expected code or signal');
+                }, err => {
                     throw err;
                 });
         });
