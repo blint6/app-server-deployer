@@ -74,7 +74,7 @@ class AppServer {
     stop() {
         if (this.process) {
             log.info('Terminating server');
-            this.process.kill();
+            this.process.kill('SIGTERM');
             return this.processEnded;
         }
     }
