@@ -129,7 +129,7 @@ gulp.task('demo', ['bundle', 'copy', 'transpile'], function () {
 
     nodemon({
         script: './' + paths.build + '/server/demo',
-        watch: [paths.build + '/server', 'node_modules'],
+        watch: [paths.build + '/server', paths.build + '/component', 'node_modules'],
         ignore: 'src',
         nodeArgs: ['--debug=9999']
     })
