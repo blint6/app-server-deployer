@@ -38,6 +38,9 @@ function tailFile(file, fromId, nLines) {
         readStream
             .on('data', function (chunk) {
 
+                if (fromId > 0 && lineId >= fromId)
+                    return readStream.unpipe();
+
                 for (let i = 0; i < chunk.length; i += 1) {
                     // \r Symbol to be removed/ignored
                     if (chunk[i] === 13) continue;
