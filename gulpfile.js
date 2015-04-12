@@ -6,6 +6,7 @@ var gulp = require('gulp');
 var del = require('del');
 var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
+var coveralls = require('gulp-coveralls');
 var mocha = require('gulp-mocha');
 var changed = require('gulp-changed');
 var babel = require('gulp-babel');
@@ -117,6 +118,12 @@ gulp.task('test', ['transpile', 'copy'], function (cb) {
                 .pipe(istanbul.writeReports())
                 .on('end', cb);
         });
+});
+
+gulp.task('coveralls', function () {
+    if (!process.env.CI) return null;
+    return gulp.src('./coverage/lcov.info')
+        .pipe(coveralls());
 });
 
 gulp.task('demo', ['bundle', 'copy', 'transpile'], function () {
