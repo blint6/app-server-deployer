@@ -104,6 +104,7 @@ gulp.task('bundle', function () {
 });
 
 gulp.task('test', ['transpile', 'copy'], function (cb) {
+    process.env.NODE_ENV = 'spec';
     var specs = 'build/**/*.spec.js';
     gulp.src(['build/**/*.js'])
         .pipe(istanbul())

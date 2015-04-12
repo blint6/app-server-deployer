@@ -14,6 +14,7 @@
     "curly": false,
     "quotes": [1, "single", "avoid-escape"],
     "comma-dangle": true,
-    "no-unused-vars": false // Because of JSX. IDE does the job
+    "no-unused-vars": false, // Because of JSX. IDE does the job
+    "no-unused-expressions": false // Because of shouldjs
   }
 }

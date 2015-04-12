@@ -11,6 +11,8 @@ let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
 let engines = {
     bukkit: './bukkit/BukkitServer',
+    test: './test/TestServer',
+    raw: null,
 };
 
 
@@ -29,7 +31,7 @@ class AppServer {
             throw Error('Cannot start server, already running');
         }
 
-        Promise.resolve(this.prepareIo())
+        return Promise.resolve(this.prepareIo())
 
             .then(() => {
                 log.info('Spawning server process');
@@ -68,6 +70,7 @@ class AppServer {
                 log.info('Server process started');
             }, err => {
                 log.error('Failed to start the server', err);
+                throw err;
             });
     }
 
@@ -177,25 +180,38 @@ AppServer.install = function (engineName, name, options) {
                 });
             }
 
-            return engine.install(appServerDef, options)
+            let server;
+
+            if (engine)
+                server = engine.install(appServerDef, options);
+            else
+                server = new AppServer(appServerDef);
+
+            return Promise.resolve(server)
                 .then(appServer => appServer, rollback);
         });
 };
 
 AppServer.load = function (serverDef) {
-    AppServer.getEngine(serverDef.engine).load(serverDef)
-        .then(server => server.run());
+    let server, engine = AppServer.getEngine(serverDef.engine);
+
+    if (engine)
+        server = engine.load(serverDef);
+    else
+        server = new AppServer(serverDef);
+
+    return Promise.resolve(server);
 };
 
 AppServer.getEngine = function (name) {
-    let engine = engines[name];
 
-    if (!engine)
+    if (!engines.hasOwnProperty(name))
         throw Error(`No server engine named ${name}`);
 
     // Do the require afterwards!!!
     // Otherwise we have a two way dependency
-    return require(engine);
+    if (engines[name])
+        return require(engines[name]);
 };
 
 module.exports = AppServer;

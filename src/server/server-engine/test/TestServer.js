@@ -7,15 +7,10 @@ let AppServer = require('../AppServer');
 
 class TestServer extends AppServer {
 
-    constructor(name, options) {
+    constructor(appServerDef, options) {
+        super(appServerDef);
         options = options || {};
-        super({
-            name: name,
-            engine: 'test',
-            port: 0,
-            memory: 1024,
-            sendInterval: options.sendInterval || -1
-        });
+        this.sendInterval = options.sendInterval || -1;
     }
 
     prepareIo() {
@@ -38,9 +33,17 @@ class TestServer extends AppServer {
     }
 
     spawnServer() {
-        let args = [require.resolve('./TestServerProcess'), this.getName(), this.appServerDef.sendInterval];
+        let args = [require.resolve('./TestServerProcess'), this.getName(), this.sendInterval];
         log.info('Executing test server with command: node %s', args.join(' '));
         return spawn('node', args);
+    }
+
+    stop() {
+        if (this.process) {
+            log.info('Terminating server by sending stop message');
+            this.sendMessage('stop');
+            return this.processEnded;
+        }
     }
 
     /* For test purpose only, Dispatcher should be used otherwise */
@@ -53,7 +56,21 @@ class TestServer extends AppServer {
     unregisterOnNewLine(listener) {
         this.process.stdout.removeListener('data', listener);
     }
+
+    registerOnNewError(cb) {
+        let listener = forEachLine(cb);
+        this.process.stderr.on('data', listener);
+        return listener;
+    }
+
+    unregisterOnNewError(listener) {
+        this.process.stderr.removeListener('data', listener);
+    }
 }
+
+TestServer.install = function install(appServerDef, options) {
+    return new TestServer(appServerDef, options);
+};
 
 TestServer.load = function load(name, options) {
     return new TestServer(name, options);
