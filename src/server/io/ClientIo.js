@@ -1,6 +1,9 @@
 let socketio = require('socket.io');
 let log = require('../core/logger');
 let dispatcher = require('../core/dispatcher');
+let Subscriber = require('../core/subscriber');
+
+Subscriber.registerClientActions();
 
 module.exports = function (server) {
 

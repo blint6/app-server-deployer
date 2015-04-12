@@ -38,9 +38,6 @@ function tailFile(file, fromId, nLines) {
         readStream
             .on('data', function (chunk) {
 
-                if (fromId > 0 && lineId >= fromId)
-                    return readStream.unpipe();
-
                 for (let i = 0; i < chunk.length; i += 1) {
                     // \r Symbol to be removed/ignored
                     if (chunk[i] === 13) continue;
@@ -68,7 +65,7 @@ function tailFile(file, fromId, nLines) {
             })
 
             .on('error', function (err) {
-                log.error('Could not tail %d lines for %s', nLines, file, err);
+                log.error('Could not tail %d lines for %s', nLines, file, err.stack);
                 reject(err);
             });
     });

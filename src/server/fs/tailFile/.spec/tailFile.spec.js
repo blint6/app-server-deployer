@@ -3,7 +3,7 @@ require('should');
 let path = require('path');
 let tailFile = require('..');
 let dummyLogPath = path.join(__dirname, 'dummy.log');
-let dummyLogLength = 6;
+let notExistsLogPath = path.join(__dirname, 'notExistsLog.log');
 
 describe('tailFile', function () {
 
@@ -59,6 +59,15 @@ describe('tailFile', function () {
             .then(lines => {
                 lines.should.instanceOf(Array);
                 lines.length.should.be.exactly(0);
+            });
+    });
+
+    it('should fail on problematic files', function () {
+        return tailFile(notExistsLogPath, 3)
+            .then(() => {
+                throw Error('The file does not exist, we should not have fetch lines!');
+            }, () => {
+                // Good, failed properly
             });
     });
 });

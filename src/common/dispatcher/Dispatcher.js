@@ -2,7 +2,6 @@ var Promise = require('es6-promise').Promise;
 var assign = require('object-assign');
 
 var callbacks = [];
-var promises = [];
 
 var Dispatcher = function () {
 };
@@ -18,6 +17,10 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
         return callbacks.length - 1; // index
     },
 
+    unregister: function (index) {
+        delete callbacks[index];
+    },
+
     /**
      * dispatch
      * @param  {object} payload The data from the action.
@@ -26,14 +29,20 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
         // First create array of promises for callbacks to reference.
         var resolves = [];
         var rejects = [];
-        promises = callbacks.map(function (_, i) {
+
+        var promises = callbacks.map(function (callback, i) {
+            if (!callback) return null;
+
             return new Promise(function (resolve, reject) {
                 resolves[i] = resolve;
                 rejects[i] = reject;
             });
         });
+
         // Dispatch to callbacks and resolve/reject promises.
         callbacks.forEach(function (callback, i) {
+            if (!callback) return;
+
             // Callback can return an obj, to resolve, or a promise, to chain.
             // See waitFor() for why this might be useful.
             Promise.resolve(callback(payload)).then(function () {
@@ -42,7 +51,8 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
                 rejects[i](new Error('Dispatcher callback unsuccessful', err));
             });
         });
-        promises = [];
+
+        return Promise.all(promises);
     }
 });
 

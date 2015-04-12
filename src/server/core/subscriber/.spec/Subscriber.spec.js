@@ -2,7 +2,8 @@ require('should');
 let sinon = require('sinon');
 let Promise = require('es6-promise').Promise;
 
-let Subscriber = require('../Subscriber');
+let Subscriber = require('..');
+let dispatcher = require('../../dispatcher');
 
 let room = {
 
@@ -24,6 +25,17 @@ let room = {
 };
 
 describe('Subscriber', function () {
+
+    describe('#registerClientActions', function () {
+
+        it('should register client actions from dispatcher', function () {
+            Subscriber.registerClientActions();
+        });
+
+        it('should fail if already registered', function () {
+            Subscriber.registerClientActions.bind(Subscriber).should.throwError();
+        });
+    });
 
     describe('#register', function () {
 
@@ -50,7 +62,10 @@ describe('Subscriber', function () {
                 .all([
                     Subscriber.subscribe('r1', 'c1'),
                     Subscriber.subscribe('r2', 'c21'),
-                    Subscriber.subscribe('r2', 'c22'),
+                    dispatcher.handleClientAction('c22', {
+                        actionType: 'sub',
+                        sub: 'r2'
+                    }),
                     Subscriber.subscribe('dummyRoom', 'cd1'),
                     Subscriber.subscribe('dummyRoom', 'cd2'),
                     Subscriber.subscribe('dummyRoom', 'cd3'),
@@ -84,7 +99,10 @@ describe('Subscriber', function () {
 
         it('should call unsubscribe callbacks properly', function () {
             Subscriber.unsubscribe('r1', 'c1');
-            Subscriber.unsubscribe('r2', 'c21');
+            dispatcher.handleClientAction('c21', {
+                actionType: 'unsub',
+                sub: 'r2'
+            });
             Subscriber.unsubscribe('dummyRoom', 'cd2');
             Subscriber.unsubscribe('dummyRoom2', 'cdremove'); // Should not fail
 
@@ -136,7 +154,7 @@ describe('Subscriber', function () {
 
     describe('#getClients', function () {
 
-        it('should the number of clients registered to a room', function () {
+        it('should get the number of clients registered to a room', function () {
             Subscriber.getClients('r1').should.eql(['c12']);
             Subscriber.getClients('r2').should.eql(['c22']);
             Subscriber.getClients('dummyRoom').should.eql(['cd1', 'cd3']);
@@ -146,6 +164,23 @@ describe('Subscriber', function () {
         it('should fail on non-existing rooms', function () {
             Subscriber.getClients.bind(Subscriber, 'not-a-room')
                 .should.throwError();
+        });
+    });
+
+    describe('#unRegisterClientActions', function () {
+
+        it('should unregister client actions from dispatcher', function () {
+            room.r2.onSubscribe.reset();
+            Subscriber.unRegisterClientActions();
+            dispatcher.handleClientAction('c21', {
+                actionType: 'sub',
+                sub: 'r2'
+            });
+            sinon.assert.notCalled(room.r2.onSubscribe);
+        });
+
+        it('should not fail while unregistering when already unregistered', function () {
+            Subscriber.unRegisterClientActions();
         });
     });
 });

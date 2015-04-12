@@ -12,7 +12,7 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
     handleServiceAction: function (action, client) {
         if (!action) throw Error('No action provided');
 
-        this.dispatch({
+        return this.dispatch({
             source: 'SERVICE_ACTION',
             client: client,
             action: action
@@ -37,7 +37,7 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
     handleClientAction: function (client, action) {
         if (!action) throw Error('No action provided');
 
-        this.dispatch({
+        return this.dispatch({
             source: 'CLIENT_ACTION',
             client: client,
             action: action
@@ -59,7 +59,7 @@ let MinodeServerDispatcher = assign({}, Dispatcher.prototype, {
      * @param  {boolean} client The client that connected.
      */
     handleClientConnection: function (client) {
-        this.dispatch({
+        return this.dispatch({
             source: 'CLIENT_CONNECTION',
             client: client
         });
