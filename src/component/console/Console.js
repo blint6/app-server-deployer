@@ -35,23 +35,13 @@ style.input = {
 
 let Console = React.createClass({
 
-    contextTypes: {
-        router: React.PropTypes.func.isRequired
-    },
-
-    getInitialState: function () {
-        return {
-            lines: ConsoleStore.getMessages()
-        };
-    },
-
     componentDidMount: function () {
-        ConsoleActions.subscribe(this.context.router.getCurrentParams().serverName);
+        ConsoleActions.subscribe(this.props.params.serverName);
         ConsoleStore.addChangeListener(this.onNewMessages);
     },
 
     componentWillUnmount: function () {
-        ConsoleActions.unsubscribe(this.context.router.getCurrentParams().serverName);
+        ConsoleActions.unsubscribe(this.props.params.serverName);
         ConsoleStore.removeChangeListener(this.onNewMessages);
     },
 
@@ -61,11 +51,13 @@ let Console = React.createClass({
     },
 
     render: function () {
-        let lines = this.state.lines.map(line => {
-            return (
-                <li key={line.id} style={style.line}>{line.message}</li>
-            );
-        });
+
+        let lines = ConsoleStore.getMessages(this.props.params.serverName)
+            .map(line => {
+                return (
+                    <li key={line.id} style={style.line}>{line.message}</li>
+                );
+            });
 
         return (
             <div className="h100">
@@ -89,14 +81,12 @@ let Console = React.createClass({
     },
 
     onNewMessages: function () {
-        this.setState({
-            lines: ConsoleStore.getMessages()
-        });
+        this.forceUpdate();
     },
 
     onKeyDown: function (e) {
         if (event.keyCode === 13) { // Enter Pressed
-            ConsoleActions.sendMessage(this.props.serverId, e.target.value);
+            ConsoleActions.sendMessage(this.props.params.serverName, e.target.value);
             e.target.value = '';
         }
     },

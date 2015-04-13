@@ -4,49 +4,62 @@ let subscriber = require('../../server/core/subscriber');
 let countLines = require('../../server/fs/countLines');
 let ConsoleConstants = require('./ConsoleConstants');
 
+let N_LAST_LOGS = 100;
 
 let ConsoleActions = {
 
-    registerServer: function (server) {
-        let room = ConsoleConstants.SUB + server.path;
+    register: function () {
+        dispatcher.registerServiceActions(function (payload) {
+            if (payload.actionType === 'AppServer#run') {
 
-        subscriber.register(room, {
+                let server = payload.server;
+                let room = ConsoleConstants.SUB + server.path;
+                let lastLogs = [];
 
-            onSubscribe: function (client) {
-                log.debug('New client subscribing to %s console', server.getName());
-                server.log.query({limit: 100, start: -100}, (err, lines) => {
-                    if (err) throw err;
+                subscriber.register(room, {
 
-                    console.log(lines);
-                    log.debug('%s sending %d lines to new client', server.getName(), lines.length);
+                    onSubscribe: function (client) {
+                        log.debug('New client subscribing to %s console', server.getName());
+                        dispatcher.handleServiceAction({
+                            actionType: ConsoleConstants.NEW_MESSAGES,
+                            server: server.getName(),
+                            messages: lastLogs
+                        }, client);
+                    },
 
-                    dispatcher.handleServiceAction({
-                        actionType: ConsoleConstants.NEW_MESSAGES,
-                        messages: lines
-                    }, client);
+                    publish: function (clients, message) {
+                        log.debug('%s sending clients: %s', server.getName(), JSON.stringify(message));
+                        dispatcher.handleServiceAction({
+                            actionType: ConsoleConstants.NEW_MESSAGES,
+                            server: server.getName(),
+                            messages: [message]
+                        }, clients);
+                    },
                 });
-            },
 
-            publish: function (clients, message) {
-                log.debug('%s sending clients: ', server.getName(), message);
-                dispatcher.handleServiceAction({
-                    actionType: ConsoleConstants.NEW_MESSAGES,
-                    messages: [message]
-                }, clients);
-            },
-        });
+                server.log.on('logging', function (transport, level, msg, meta) {
+                    if (transport.name === 'console') {
+                        var logMsg = {
+                            level, message: msg, meta
+                        };
 
-        server.log.stream({start: -1}).on('log', function (log) {
-            log.debug('%s server emitted %s', server.getName(), action);
-            subscriber.publish(room, log);
-        });
+                        subscriber.publish(room, logMsg);
 
-        dispatcher.registerClientActions(function (payload) {
-            let action = payload.action;
+                        lastLogs.push(logMsg);
 
-            if (action.actionType === ConsoleConstants.SEND_MESSAGE && action.serverId === server.getName()) {
-                log.debug('Received client message in server %s console', server.getName(), action);
-                server.sendMessage(action.message);
+                        if (lastLogs.length > N_LAST_LOGS)
+                            lastLogs.shift();
+                    }
+                });
+
+                dispatcher.registerClientActions(function (payload) {
+                    let action = payload.action;
+
+                    if (action.actionType === ConsoleConstants.SEND_MESSAGE && action.serverId === server.getName()) {
+                        log.debug('Received client message in server %s console', server.getName(), action);
+                        server.sendMessage(action.message);
+                    }
+                });
             }
         });
     },

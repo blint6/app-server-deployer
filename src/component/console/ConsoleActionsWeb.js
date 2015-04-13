@@ -1,5 +1,6 @@
 let dispatcher = require('../../web/dispatcher');
 let ConsoleConstants = require('./ConsoleConstants');
+let ConsoleStore = require('./ConsoleStore');
 
 let ConsoleActions = {
 
@@ -29,6 +30,7 @@ let ConsoleActions = {
     },
 
     unsubscribe: function (serverId) {
+        ConsoleStore.clearMessages(serverId);
         dispatcher.handleViewAction({
             actionType: 'unsub',
             sub: ConsoleConstants.SUB + serverId

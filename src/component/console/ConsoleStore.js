@@ -5,20 +5,20 @@ let ConsoleConstants = require('./ConsoleConstants');
 
 let CHANGE_EVENT = 'change';
 
-let chat;
+let chat = {};
 
-function addMessages(messages) {
-    if (!chat)
-        chat = {
+function addMessages(server, messages) {
+    if (!chat[server])
+        chat[server] = {
             initialId: 0,
             lastId: -1,
             messages: []
         };
 
     messages.forEach(message => {
-        chat.lastId += 1;
-        message.id = chat.lastId;
-        chat.messages.push(message);
+        chat[server].lastId += 1;
+        message.id = chat[server].lastId;
+        chat[server].messages.push(message);
     });
 }
 
@@ -28,8 +28,8 @@ let ChatStore = assign({}, EventEmitter.prototype, {
      * Get the entire collection of messages.
      * @return {object}
      */
-    getMessages: function () {
-        return chat ? chat.messages : [];
+    getMessages: function (server) {
+        return chat[server] ? chat[server].messages : [];
     },
 
     emitChange: function () {
@@ -50,14 +50,23 @@ let ChatStore = assign({}, EventEmitter.prototype, {
         this.removeListener(CHANGE_EVENT, callback);
     },
 
+    clearMessages: function (server) {
+        if (chat[server])
+            delete chat[server];
+    },
+
     dispatcherIndex: dispatcher.register(function (payload) {
         let action = payload.action;
 
         switch (action.actionType) {
             case ConsoleConstants.NEW_MESSAGES:
-                if (action.messages && action.messages.length) {
-                    addMessages(action.messages);
-                    ChatStore.emitChange();
+                if (action.server) {
+                    if (action.messages && action.messages.length) {
+                        addMessages(action.server, action.messages);
+                        ChatStore.emitChange();
+                    }
+                } else {
+                    console.warn('Console message received but no server name was provided');
                 }
                 break;
         }
