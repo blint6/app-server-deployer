@@ -1,4 +1,4 @@
-require('should');
+let should = require('should');
 
 let mockgoose = require('mockgoose');
 mockgoose(require('mongoose'));
@@ -17,19 +17,19 @@ describe('AppServer', function () {
     describe('.getEngine', function () {
 
         it('should succeed on all known engines', function () {
-            AppServer.getEngine('bukkit').should.not.be.empty;
-            AppServer.getEngine('test').should.not.be.empty;
+            AppServer.getEngine('./test/TestServer').should.equal(require('../test/TestServer'));
+            should(AppServer.getEngine(null)).be.null;
         });
 
         it('should fail on unknown engines', function () {
-            AppServer.getEngine.bind(AppServer, 'unknown-engine').should.throwError();
+            AppServer.getEngine.bind(AppServer, './unknown-engine').should.throwError();
         });
     });
 
     describe('.install', function () {
 
         it('should create a raw server properly', function () {
-            return AppServer.install('raw', 'foo-server')
+            return AppServer.install(null, 'foo-server')
                 .then(
                     server => {
                     server.should.instanceOf(AppServer);
@@ -128,7 +128,7 @@ describe('AppServer', function () {
                     servers.should.be.instanceOf(Array);
                     servers.length.should.equal(1);
                     servers[0].getName().should.equal('foo-server');
-                    servers[0].appServerDef.engine.should.equal('raw');
+                    should(servers[0].appServerDef.engine).be.null;
                 });
         });
     });

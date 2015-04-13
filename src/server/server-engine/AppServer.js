@@ -9,12 +9,6 @@ let tailFile = require('../fs/tailFile');
 let forEachLine = require('../fs/forEachLine');
 let AppServerModel = require('./AppServerModel');
 
-let engines = {
-    bukkit: './bukkit/BukkitServer',
-    test: './test/TestServer',
-    raw: null,
-};
-
 
 class AppServer {
 
@@ -207,14 +201,10 @@ AppServer.load = function (serverDef) {
 };
 
 AppServer.getEngine = function (name) {
-
-    if (!engines.hasOwnProperty(name))
-        throw Error(`No server engine named ${name}`);
-
-    // Do the require afterwards!!!
-    // Otherwise we have a two way dependency
-    if (engines[name])
-        return require(engines[name]);
+    if (typeof name === 'string')
+        return require(name);
+    else
+        return null;
 };
 
 module.exports = AppServer;

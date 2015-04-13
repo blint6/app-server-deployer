@@ -14,8 +14,8 @@ describe('TestServer', function () {
 
         it('should create a test server properly', function () {
             return Promise.all([
-                AppServer.install('test', 'test-server'),
-                AppServer.install('test', 'bar-server')
+                AppServer.install('./test/TestServer', 'test-server'),
+                AppServer.install('./test/TestServer', 'bar-server')
             ])
                 .then(servers => {
                     servers[0].should.instanceOf(TestServer);
