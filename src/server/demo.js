@@ -7,9 +7,13 @@ log.info('Minode demo start');
 
 require('./serve');
 
+let actions = [
+    require('../component/console/ConsoleActionsSrv')
+];
+
 let servers = [
-    TestServer.load('foo-server', {sendInterval: 4000}),
-    TestServer.load('bar-server', {sendInterval: 5000})
+    TestServer.load({name: 'foo-server'}, {sendInterval: 4000}),
+    TestServer.load({name: 'bar-server'}, {sendInterval: 5000})
 ];
 
 dispatcher.registerClientConnections(function (payload) {
@@ -21,4 +25,5 @@ dispatcher.registerClientConnections(function (payload) {
     }, payload.client);
 });
 
+actions.forEach(action => action.register());
 servers.forEach(server => server.run());

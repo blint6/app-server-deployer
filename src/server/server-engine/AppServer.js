@@ -4,10 +4,10 @@ let Promise = require('es6-promise').Promise;
 let winston = require('winston');
 let Logger = winston.Logger;
 let log = require('../core/logger');
+let dispatcher = require('../core/dispatcher');
 let tailFile = require('../fs/tailFile');
 let forEachLine = require('../fs/forEachLine');
 let AppServerModel = require('./AppServerModel');
-let ConsoleActions = require('minode/component/console/ConsoleActionsSrv');
 
 let engines = {
     bukkit: './bukkit/BukkitServer',
@@ -63,7 +63,10 @@ class AppServer {
                 }.bind(this));
 
                 // Log notifier
-                ConsoleActions.registerServer(this);
+                dispatcher.handleServiceAction({
+                    actionType: 'AppServer#run',
+                    server: this
+                });
             })
 
             .then(() => {

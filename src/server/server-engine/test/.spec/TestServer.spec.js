@@ -1,6 +1,8 @@
 require('should');
 
 let Promise = require('es6-promise').Promise;
+let sinon = require('sinon');
+let dispatcher = require('../../../core/dispatcher');
 let AppServer = require('../../AppServer');
 let TestServer = require('../TestServer');
 
@@ -27,10 +29,27 @@ describe('TestServer', function () {
     describe('#run', function () {
 
         it('should run the server properly', function () {
-            return Promise.all([
-                fooServer.run(),
-                barServer.run(),
-            ]);
+            let cb = sinon.spy();
+            dispatcher.registerServiceActions(cb);
+
+            return fooServer.run()
+                .then(() => {
+                    sinon.assert.calledOnce(cb);
+                    cb.firstCall.args[0].should.have.property('action', {
+                        actionType: 'AppServer#run',
+                        server: fooServer
+                    });
+                    cb.reset();
+                })
+                .then(() => barServer.run())
+                .then(() => {
+                    sinon.assert.calledOnce(cb);
+                    cb.firstCall.args[0].should.have.property('action', {
+                        actionType: 'AppServer#run',
+                        server: barServer
+                    });
+                    cb.reset();
+                });
         });
 
         it('should fail if attempted to be run while already running', function () {
