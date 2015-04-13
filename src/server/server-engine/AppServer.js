@@ -101,6 +101,7 @@ class AppServer {
                 log.info('Preparing server directories');
 
                 fs.mkdir(this.path, err => {
+                    /* istanbul ignore next */
                     if (err && err.code !== 'EEXIST') reject(err);
                     else resolve();
                 });
@@ -109,6 +110,7 @@ class AppServer {
             .then(() => {
                 let logDirPromise = new Promise((resolve, reject) => {
                     fs.mkdir(this.getLogDir(), err => {
+                        /* istanbul ignore next */
                         if (err && err.code !== 'EEXIST') reject(err);
                         else resolve();
                     });
@@ -116,6 +118,7 @@ class AppServer {
 
                 let instanceDirPromise = new Promise((resolve, reject) => {
                     fs.mkdir(this.getExecutionDir(), err => {
+                        /* istanbul ignore next */
                         if (err && err.code !== 'EEXIST') reject(err);
                         else resolve();
                     });
