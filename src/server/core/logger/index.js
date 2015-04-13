@@ -3,7 +3,7 @@ let mkdirp = require('mkdirp');
 
 let logger;
 
-function logFactory(level) {
+function testLogFactory(level) {
     let consoleLog = console[level];
 
     return function log() {
@@ -17,21 +17,14 @@ function logFactory(level) {
     };
 }
 
-if (process.env.NODE_ENV === 'spec') {
-    logger = {
-        debug: logFactory('log'),
-        info: logFactory('info'),
-        warn: logFactory('warn'),
-        error: logFactory('error')
-    };
-} else {
+function getProdLogger() {
     let winston = require('winston');
     let Logger = winston.Logger;
     let logDir = 'log';
 
     mkdirp.sync(logDir);
 
-    logger = new Logger({
+    return new Logger({
         transports: [
             new winston.transports.DailyRotateFile({
                 name: 'minode',
@@ -48,4 +41,15 @@ if (process.env.NODE_ENV === 'spec') {
     });
 }
 
-module.exports = logger;
+/* istanbul ignore next */
+if (process.env.NODE_ENV === 'spec') {
+    module.exports = {
+        debug: testLogFactory('log'),
+        info: testLogFactory('info'),
+        warn: testLogFactory('warn'),
+        error: testLogFactory('error'),
+        getProdLogger: getProdLogger,
+    };
+} else {
+    module.exports = getProdLogger();
+}
