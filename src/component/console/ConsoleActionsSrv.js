@@ -10,9 +10,10 @@ let ConsoleActions = {
 
     register: function () {
         dispatcher.registerServiceActions(function (payload) {
-            if (payload.actionType === 'AppServer#run') {
+            let action = payload.action;
 
-                let server = payload.server;
+            if (action.actionType === 'AppServer#run') {
+                let server = action.server;
                 let room = ConsoleConstants.SUB + server.path;
                 let lastLogs = [];
 
