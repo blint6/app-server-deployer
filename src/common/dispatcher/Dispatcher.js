@@ -31,7 +31,6 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
         var rejects = [];
 
         var promises = callbacks.map(function (callback, i) {
-            if (!callback) return null;
 
             return new Promise(function (resolve, reject) {
                 resolves[i] = resolve;
@@ -41,15 +40,18 @@ Dispatcher.prototype = assign({}, Dispatcher.prototype, {
 
         // Dispatch to callbacks and resolve/reject promises.
         callbacks.forEach(function (callback, i) {
-            if (!callback) return;
 
             // Callback can return an obj, to resolve, or a promise, to chain.
             // See waitFor() for why this might be useful.
-            Promise.resolve(callback(payload)).then(function () {
-                resolves[i](payload);
-            }, function (err) {
-                rejects[i](new Error('Dispatcher callback unsuccessful', err));
-            });
+            try {
+                Promise.resolve(callback(payload)).then(function () {
+                    resolves[i](payload);
+                }, function (err) {
+                    rejects[i](err);
+                });
+            } catch (err) {
+                rejects[i](err);
+            }
         });
 
         return Promise.all(promises);
