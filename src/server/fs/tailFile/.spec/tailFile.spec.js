@@ -17,7 +17,8 @@ describe('tailFile', function () {
                 lines[0].should.have.property('content', 'A');
 
                 lines[1].should.have.property('id', 5);
-                lines[1].should.have.property('content', 'Bcd');
+                lines[1].should.have.property('content')
+                lines[1].content.should.match(/^Lorem ipsum/);
 
                 lines[2].should.have.property('id', 6);
                 lines[2].should.have.property('content', 'EOF');
@@ -31,7 +32,8 @@ describe('tailFile', function () {
                 lines.length.should.be.exactly(2);
 
                 lines[0].should.have.property('id', 2);
-                lines[0].should.have.property('content', '');
+                lines[0].should.have.property('content')
+                lines[0].content.should.match(/^Vivamus fermentum/);
 
                 lines[1].should.have.property('id', 3);
                 lines[1].should.have.property('content', 'Now generating random lines');
